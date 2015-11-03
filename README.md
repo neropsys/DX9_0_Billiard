@@ -1,5 +1,5 @@
 # This is my first readme file
-# 1. bonbong에서 주는 winzip파일 압축을 풀고 Include와 Lib폴더를 프로젝트 폴더에 넣는다
+# 1. bongbong에서 주는 DX winzip파일 압축을 풀고 Include와 Lib폴더 두개만 프로젝트 폴더에 넣는다.
 # (현재로썬 Include와 Lib만 추가하면 따로 프로젝트 설정을 건드리지 않아도 되게 수정을 했으니 2~5번은 넘겨도 됩니다.)
 # 2. 프로젝트 속성에 들어가서 링커->고급-> 이미지에 안전한 예외 처리기 포함을 "아니오" 로 설정
 # 3. VC++ 디렉터리->포함(Include) 디렉터리를 1번의 Include폴더로 설정
