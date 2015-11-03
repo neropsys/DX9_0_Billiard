@@ -1,17 +1,17 @@
 # This is my first readme file
-# 0. ÇÁ·ÎÁ§Æ® ÆÄÀÏÀÇ sln(ÇÁ·ÎÁ§Æ® ¼Ö·ç¼Ç ÆÄÀÏ)À» ½ÇÇàÇØ¼­ ÇÁ·ÎÁ§Æ® ¾÷±×·¹ÀÌµå¸¦ ÇØÁØ´Ù.
-# 1. bonbong¿¡¼­ ÁÖ´Â winzipÆÄÀÏ ¾ĞÃàÀ» Ç®°í Include¿Í LibÆú´õ¸¦ ÇÁ·ÎÁ§Æ® Æú´õ¿¡ ³Ö´Â´Ù
-# 2. ÇÁ·ÎÁ§Æ® ¼Ó¼º¿¡ µé¾î°¡¼­ ¸µÄ¿->°í±Ş-> ÀÌ¹ÌÁö¿¡ ¾ÈÀüÇÑ ¿¹¿Ü Ã³¸®±â Æ÷ÇÔÀ» "¾Æ´Ï¿À" ·Î ¼³Á¤
-# 3. VC++ µğ·ºÅÍ¸®->Æ÷ÇÔ(Include) µğ·ºÅÍ¸®¸¦ 1¹øÀÇ IncludeÆú´õ·Î ¼³Á¤
-# 4. VC++ µğ·ºÅÍ¸®->¶óÀÌºê·¯¸®(Library) µğ·ºÅÍ¸®¸¦ 1¹øÀÇ LibÆú´õ·Î ¼³Á¤
-# 5. Æ÷ÇÔ/¶óÀÌºê·¯¸® µğ·ºÅÍ¸®¸¦ º¸¸é ´ëÃæ 
+# 1. bonbongì—ì„œ ì£¼ëŠ” winzipíŒŒì¼ ì••ì¶•ì„ í’€ê³  Includeì™€ Libí´ë”ë¥¼ í”„ë¡œì íŠ¸ í´ë”ì— ë„£ëŠ”ë‹¤
+# (í˜„ì¬ë¡œì¬ Includeì™€ Libë§Œ ì¶”ê°€í•˜ë©´ ë”°ë¡œ í”„ë¡œì íŠ¸ ì„¤ì •ì„ ê±´ë“œë¦¬ì§€ ì•Šì•„ë„ ë˜ê²Œ ìˆ˜ì •ì„ í–ˆìœ¼ë‹ˆ 2~5ë²ˆì€ ë„˜ê²¨ë„ ë©ë‹ˆë‹¤.)
+# 2. í”„ë¡œì íŠ¸ ì†ì„±ì— ë“¤ì–´ê°€ì„œ ë§ì»¤->ê³ ê¸‰-> ì´ë¯¸ì§€ì— ì•ˆì „í•œ ì˜ˆì™¸ ì²˜ë¦¬ê¸° í¬í•¨ì„ "ì•„ë‹ˆì˜¤" ë¡œ ì„¤ì •
+# 3. VC++ ë””ë ‰í„°ë¦¬->í¬í•¨(Include) ë””ë ‰í„°ë¦¬ë¥¼ 1ë²ˆì˜ Includeí´ë”ë¡œ ì„¤ì •
+# 4. VC++ ë””ë ‰í„°ë¦¬->ë¼ì´ë¸ŒëŸ¬ë¦¬(Library) ë””ë ‰í„°ë¦¬ë¥¼ 1ë²ˆì˜ Libí´ë”ë¡œ ì„¤ì •
+# 5. í¬í•¨/ë¼ì´ë¸ŒëŸ¬ë¦¬ ë””ë ‰í„°ë¦¬ë¥¼ ë³´ë©´ ëŒ€ì¶© 
 # C:\Users\user\Documents\GitHub\proj3_VirtualBilliard\Include;$(IncludePath)
-# ÀÌ·¸°Ô µÇ¾îÀÖÀ» °ÍÀÌ´Ù. ¼ø¼­¸¦ ¹Ù²ãÁØ´Ù
+# ì´ë ‡ê²Œ ë˜ì–´ìˆì„ ê²ƒì´ë‹¤. ìˆœì„œë¥¼ ë°”ê¿”ì¤€ë‹¤
 # 
 # $(IncludePath);C:\Users\user\Documents\GitHub\proj3_VirtualBilliard\Include
 # $(LibraryPath);C:\Users\user\Documents\GitHub\proj3_VirtualBilliard\Lib
-# ÀÌ·¸°Ô
+# ì´ë ‡ê²Œ
 
-# 6.d3dUtility.h °¡Àå »ó´Ü¿¡ #pragma warning(disable:2026) Ãß°¡
-# 7.d3dUtility.h °¡Àå ÇÏ´Ü¿¡ const float INFINITY = FLT_MAX; ¸¦ const float INF = FLT_MAX; ·Î ¼öÁ¤
-# 8.d3dUtility.cpp¿¡¼­ INFINITY¸¦ ¸ğµÎ INF·Î ¼öÁ¤
+# 6.d3dUtility.h ê°€ì¥ ìƒë‹¨ì— #pragma warning(disable:2026) ì¶”ê°€
+# 7.d3dUtility.h ê°€ì¥ í•˜ë‹¨ì— const float INFINITY = FLT_MAX; ë¥¼ const float INF = FLT_MAX; ë¡œ ìˆ˜ì •
+# 8.d3dUtility.cppì—ì„œ INFINITYë¥¼ ëª¨ë‘ INFë¡œ ìˆ˜ì •
