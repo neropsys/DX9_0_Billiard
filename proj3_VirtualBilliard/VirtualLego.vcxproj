@@ -45,8 +45,8 @@
     <OutDir>.\Debug\</OutDir>
     <IntDir>.\Debug\</IntDir>
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(IncludePath);C:\Users\user\Documents\GitHub\proj3_VirtualBilliard\Include</IncludePath>
-    <LibraryPath>$(LibraryPath);C:\Users\user\Documents\GitHub\proj3_VirtualBilliard\Lib</LibraryPath>
+    <IncludePath>$(IncludePath);$(ProjectDir)\Include</IncludePath>
+    <LibraryPath>$(LibraryPath);$(ProjectDir)\Lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>.\Release\</OutDir>
