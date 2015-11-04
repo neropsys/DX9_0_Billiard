@@ -11,6 +11,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "d3dUtility.h"
+#include "CSphere.h"
 #include <vector>
 #include <ctime>
 #include <cstdlib>
@@ -44,7 +45,7 @@ D3DXMATRIX g_mProj;
 // -----------------------------------------------------------------------------
 // CSphere class definition
 // -----------------------------------------------------------------------------
-
+/*
 class CSphere {
 private :
 	float					center_x, center_y, center_z;
@@ -67,6 +68,7 @@ public:
 public:
     bool create(IDirect3DDevice9* pDevice, D3DXCOLOR color = d3d::WHITE)
     {
+		//텍스쳐, 셰이더, 모델 순서대로 로딩해야함
         if (NULL == pDevice)
             return false;
 		
@@ -87,6 +89,14 @@ public:
             m_pSphereMesh->Release();
             m_pSphereMesh = NULL;
         }
+		if (m_effect != NULL){
+			m_effect->Release();
+			m_effect = NULL;
+		}
+		if (m_texture != NULL){
+			m_texture->Release();
+			m_texture = NULL;
+		}
     }
 
     void draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld)
@@ -123,7 +133,7 @@ public:
 			float tZ = cord.z + TIME_SCALE*timeDiff*m_velocity_z;
 
 			//correction of position of ball
-			/* Please uncomment this part because this correction of ball position is necessary when a ball collides with a wall
+			// Please uncomment this part because this correction of ball position is necessary when a ball collides with a wall
 			if(tX >= (4.5 - M_RADIUS))
 				tX = 4.5 - M_RADIUS;
 			else if(tX <=(-4.5 + M_RADIUS))
@@ -132,7 +142,7 @@ public:
 				tZ = -3 + M_RADIUS;
 			else if(tZ >= (3 - M_RADIUS))
 				tZ = 3 - M_RADIUS;
-			*/
+			
 			this->setCenter(tX, cord.y, tZ);
 		}
 		else { this->setPower(0,0);}
@@ -173,10 +183,44 @@ private:
     D3DXMATRIX              m_mLocal;
     D3DMATERIAL9            m_mtrl;
     ID3DXMesh*              m_pSphereMesh;
+	LPD3DXEFFECT			m_effect;
+	LPDIRECT3DTEXTURE9		m_texture;
+
+private:
+	LPD3DXEFFECT LoadShader(const char* fileName){
+		LPD3DXEFFECT ret = NULL;
+		LPD3DXBUFFER pError = NULL;
+		DWORD dwShaderFlags = 0;
+#if _DEBUG
+		dwShaderFlags |= D3DXSHADER_DEBUG;
+#endif
+		D3DXCreateEffectFromFile(Device, fileName, NULL, NULL, dwShaderFlags, NULL, &ret, &pError);
+		if (!ret && pError){
+			int size = pError->GetBufferSize();
+			void* ack = pError->GetBufferPointer();
+			if (ack){
+				char* str = new char[size];
+				sprintf(str, (const char*)ack, size);
+				OutputDebugString(str);
+				delete[] str;
+			}
+		}
+		return ret;
+
+	}
+	LPDIRECT3DTEXTURE9 LoadTexture(const char* fileName){
+		LPDIRECT3DTEXTURE9 ret = NULL;
+		if (FAILED(D3DXCreateTextureFromFile(Device, fileName, &ret))){
+			OutputDebugString("Failed to load texture: ");
+			OutputDebugString(fileName);
+			OutputDebugString("\n");
+		}
+		return ret;
+	}
 	
 };
 
-
+*/
 
 // -----------------------------------------------------------------------------
 // CWall class definition
