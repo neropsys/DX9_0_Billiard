@@ -52,7 +52,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="ballShader.hlsl">
+    <FxCompile Include="SphereVS.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="SpherePS.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
   </ItemGroup>

@@ -1,5 +1,5 @@
 #include "CSphere.h"
-
+#include <d3d9.h>
 CSphere::CSphere(){
 	D3DXMatrixIdentity(&m_mLocal);
 	ZeroMemory(&m_mtrl, sizeof(m_mtrl));
@@ -11,6 +11,14 @@ CSphere::CSphere(){
 CSphere::~CSphere(){}
 bool CSphere::create(IDirect3DDevice9* pDevice, D3DXCOLOR color){
 	if (!CObject::create(pDevice, color))
+		return false;
+	m_effect = LoadShader(pDevice, SPHERE_VS_NAME);
+	if (!m_effect)
+		return false;
+
+	m_texture = LoadTexture(pDevice, SPHERE_TEXTURE);
+
+	if (!m_texture)
 		return false;
 	if (FAILED(D3DXCreateSphere(pDevice, getRadius(), 50, 50, &m_pMesh, NULL)))
 		return false;
@@ -31,14 +39,38 @@ void CSphere::destroy(){
 		m_texture = NULL;
 	}
 }
-void CSphere::draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld)
+void CSphere::draw(IDirect3DDevice9* pDevice,
+	const D3DXMATRIX& mWorld,
+	const D3DXMATRIX& mView,
+	const D3DXMATRIX& mProj)
 {
 	if (NULL == pDevice)
 		return;
+	
 	pDevice->SetTransform(D3DTS_WORLD, &mWorld);
 	pDevice->MultiplyTransform(D3DTS_WORLD, &m_mLocal);
 	pDevice->SetMaterial(&m_mtrl);
+	/*
+	m_effect->SetMatrix("gWorld", &mWorld);
+	m_effect->SetMatrix("gView", &mView);
+	m_effect->SetMatrix("gProj", &mProj);
+	m_effect->SetTexture("DiffuseSampler", m_texture);
+
+	UINT numPass = 0;
+	m_effect->Begin(&numPass, NULL);
+	{
+		for (UINT i = 0; i < numPass; ++i){
+			//m_effect->BeginPass(i)
+			{
+				m_pMesh->DrawSubset(0);
+			}
+			//m_effect->
+		}
+	}
+	m_effect->End();
+	*/
 	m_pMesh->DrawSubset(0);
+
 }
 bool CSphere::hasIntersected(CSphere& ball)
 {
@@ -111,7 +143,7 @@ LPD3DXEFFECT CSphere::LoadShader(IDirect3DDevice9* pDevice, const char* fileName
 	return ret;
 
 }
-LPDIRECT3DTEXTURE9 LoadTexture(IDirect3DDevice9* pDevice, const char* fileName){
+LPDIRECT3DTEXTURE9 CSphere::LoadTexture(IDirect3DDevice9* pDevice, const char* fileName){
 	LPDIRECT3DTEXTURE9 ret = NULL;
 	if (FAILED(D3DXCreateTextureFromFile(pDevice, fileName, &ret))){
 		OutputDebugString("Failed to load texture: ");

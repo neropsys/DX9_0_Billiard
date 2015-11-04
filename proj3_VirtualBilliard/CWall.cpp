@@ -34,7 +34,9 @@ void CWall::destroy(){
 	}
 		
 }
-void CWall::draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld){
+void CWall::draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld,
+	const D3DXMATRIX& mView,
+	const D3DXMATRIX& mProj){
 	if (NULL == pDevice)
 		return;
 	pDevice->SetTransform(D3DTS_WORLD, &mWorld);

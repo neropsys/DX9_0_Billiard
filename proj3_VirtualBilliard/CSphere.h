@@ -1,6 +1,9 @@
 #pragma once
 #include "CObject.h"
 #include "d3dUtility.h"
+#define SPHERE_VS_NAME "SphereVS.hlsl"
+#define SPHERE_PS_NAME "SpherePS.hlsl"
+#define SPHERE_TEXTURE "wood.jpg"
 class CSphere : public CObject{
 public:
 	CSphere();
@@ -9,7 +12,9 @@ public:
 	bool create(IDirect3DDevice9* pDevice, D3DXCOLOR color = d3d::WHITE);
 	void destroy(void) override;
 
-	void draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld) override;
+	void draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld,
+		const D3DXMATRIX& mView,
+		const D3DXMATRIX& mProj) override;
 
 	bool hasIntersected(CSphere& ball) override;
 	void hitBy(CSphere& ball) override;

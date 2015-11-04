@@ -126,9 +126,9 @@ bool Setup()
 	Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
 	
     // Set render states.
-    Device->SetRenderState(D3DRS_LIGHTING, TRUE);
+    /*Device->SetRenderState(D3DRS_LIGHTING, TRUE);
     Device->SetRenderState(D3DRS_SPECULARENABLE, TRUE);
-    Device->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
+    Device->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);*/
 	
 	g_light.setLight(Device, g_mWorld);
 	return true;
@@ -173,12 +173,12 @@ bool Display(float timeDelta)
 		}
 
 		// draw plane, walls, and spheres
-		g_legoPlane.draw(Device, g_mWorld);
+		g_legoPlane.draw(Device, g_mWorld, g_mView, g_mProj);
 		for (i=0;i<4;i++) 	{
-			g_legowall[i].draw(Device, g_mWorld);
-			g_sphere[i].draw(Device, g_mWorld);
+			g_legowall[i].draw(Device, g_mWorld, g_mView, g_mProj);
+			g_sphere[i].draw(Device, g_mWorld, g_mView, g_mProj);
 		}
-		g_target_blueball.draw(Device, g_mWorld);
+		g_target_blueball.draw(Device, g_mWorld, g_mView, g_mProj);
         g_light.draw(Device);
 		
 		Device->EndScene();
