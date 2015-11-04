@@ -12,6 +12,7 @@ CSphere::~CSphere(){}
 bool CSphere::create(IDirect3DDevice9* pDevice, D3DXCOLOR color){
 	if (!CObject::create(pDevice, color))
 		return false;
+	/*
 	m_effect = LoadShader(pDevice, SPHERE_VS_NAME);
 	if (!m_effect)
 		return false;
@@ -20,6 +21,7 @@ bool CSphere::create(IDirect3DDevice9* pDevice, D3DXCOLOR color){
 
 	if (!m_texture)
 		return false;
+		*/
 	if (FAILED(D3DXCreateSphere(pDevice, getRadius(), 50, 50, &m_pMesh, NULL)))
 		return false;
 	return true;

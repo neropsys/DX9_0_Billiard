@@ -126,9 +126,9 @@ bool Setup()
 	Device->SetTransform(D3DTS_PROJECTION, &g_mProj);
 	
     // Set render states.
-    /*Device->SetRenderState(D3DRS_LIGHTING, TRUE);
+    Device->SetRenderState(D3DRS_LIGHTING, TRUE);
     Device->SetRenderState(D3DRS_SPECULARENABLE, TRUE);
-    Device->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);*/
+    Device->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
 	
 	g_light.setLight(Device, g_mWorld);
 	return true;
