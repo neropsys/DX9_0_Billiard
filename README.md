@@ -17,4 +17,14 @@ $(LibraryPath);C:\Users\user\Documents\GitHub\proj3_VirtualBilliard\Lib
 8.d3dUtility.cpp에서 INFINITY를 모두 INF로 수정
 
 # 코드 컨벤션
-갸아아악....
+# Coding Convention
+1. 괄호
+
+ main()
+ {
+ 
+ }
+2. 변수이름
+
+ hello_world (NOT helloWorld)
+3. 주석은 변수나 주요 구현 부분에 꼬박꼬박 달아주세요.
