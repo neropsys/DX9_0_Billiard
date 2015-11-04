@@ -3,7 +3,8 @@
 #include "d3dUtility.h"
 #define SPHERE_VS_NAME "SphereVS.hlsl"
 #define SPHERE_PS_NAME "SpherePS.hlsl"
-#define SPHERE_TEXTURE "wood.jpg"
+#define SPHERE_TEXTURE "checkered.png"
+#define SPHERE_MODEL "Sphere.x"
 class CSphere : public CObject{
 public:
 	CSphere();
@@ -42,8 +43,10 @@ private:
 	float					m_velocity_x;
 	float					m_velocity_z;
 	LPD3DXEFFECT			m_effect;
+	//LPD3DXBUFFER			m_effect;
 	LPDIRECT3DTEXTURE9		m_texture;
 	LPD3DXEFFECT LoadShader(IDirect3DDevice9* pDevice, const char* fileName);
 	LPDIRECT3DTEXTURE9 LoadTexture(IDirect3DDevice9* pDevice, const char* fileName);
+	LPD3DXMESH LoadModel(IDirect3DDevice9* pDevice, const char* fileName);
 	void setPosition(float x, float y, float z) override;
 };

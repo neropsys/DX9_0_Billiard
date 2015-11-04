@@ -11,17 +11,20 @@ CSphere::CSphere(){
 CSphere::~CSphere(){}
 bool CSphere::create(IDirect3DDevice9* pDevice, D3DXCOLOR color){
 	if (!CObject::create(pDevice, color))
-		return false;
-	m_effect = LoadShader(pDevice, SPHERE_VS_NAME);
-	if (!m_effect)
-		return false;
-
+		return false;/*
 	m_texture = LoadTexture(pDevice, SPHERE_TEXTURE);
-
 	if (!m_texture)
 		return false;
-	if (FAILED(D3DXCreateSphere(pDevice, getRadius(), 50, 50, &m_pMesh, NULL)))
+
+	m_effect = LoadShader(pDevice, SPHERE_VS_NAME);
+	if (!m_effect)
+		return false;*/
+
+	m_pMesh = LoadModel(pDevice, SPHERE_MODEL);
+	if (!m_pMesh)
 		return false;
+
+
 	return true;
 }
 void CSphere::destroy(){
@@ -50,26 +53,33 @@ void CSphere::draw(IDirect3DDevice9* pDevice,
 	pDevice->SetTransform(D3DTS_WORLD, &mWorld);
 	pDevice->MultiplyTransform(D3DTS_WORLD, &m_mLocal);
 	pDevice->SetMaterial(&m_mtrl);
+	m_pMesh->DrawSubset(0);
 	/*
+	pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+
 	m_effect->SetMatrix("gWorld", &mWorld);
 	m_effect->SetMatrix("gView", &mView);
 	m_effect->SetMatrix("gProj", &mProj);
-	m_effect->SetTexture("DiffuseSampler", m_texture);
-
+	m_effect->SetTexture("DiffuseMap", m_texture);
+	//pDevice->SetTexture(0, m_texture);
 	UINT numPass = 0;
+	D3DXHANDLE hTech = m_effect->GetTechniqueByName("SphereVS");
+	m_effect->SetTechnique(hTech);
+	
 	m_effect->Begin(&numPass, NULL);
 	{
-		for (UINT i = 0; i < numPass; ++i){
-			//m_effect->BeginPass(i)
+		for (UINT i = 0; i < numPass; ++i)
+		{
+			m_effect->BeginPass(i);
 			{
 				m_pMesh->DrawSubset(0);
 			}
-			//m_effect->
+			m_effect->EndPass();
 		}
 	}
 	m_effect->End();
 	*/
-	m_pMesh->DrawSubset(0);
 
 }
 bool CSphere::hasIntersected(CSphere& ball)
@@ -129,6 +139,7 @@ LPD3DXEFFECT CSphere::LoadShader(IDirect3DDevice9* pDevice, const char* fileName
 #if _DEBUG
 	dwShaderFlags |= D3DXSHADER_DEBUG;
 #endif
+	//D3DXCompileShaderFromFile(fileName, 0, 0, "main", "vs_3_0", dwShaderFlags, &m_effect, &pError, NULL);
 	D3DXCreateEffectFromFile(pDevice, fileName, NULL, NULL, dwShaderFlags, NULL, &ret, &pError);
 	if (!ret && pError){
 		int size = pError->GetBufferSize();
@@ -147,6 +158,15 @@ LPDIRECT3DTEXTURE9 CSphere::LoadTexture(IDirect3DDevice9* pDevice, const char* f
 	LPDIRECT3DTEXTURE9 ret = NULL;
 	if (FAILED(D3DXCreateTextureFromFile(pDevice, fileName, &ret))){
 		OutputDebugString("Failed to load texture: ");
+		OutputDebugString(fileName);
+		OutputDebugString("\n");
+	}
+	return ret;
+}
+LPD3DXMESH CSphere::LoadModel(IDirect3DDevice9* pDevice, const char* fileName){
+	LPD3DXMESH ret = NULL;
+	if (FAILED(D3DXLoadMeshFromX(fileName, D3DXMESH_SYSTEMMEM, pDevice, NULL, NULL, NULL, NULL, &ret))){
+		OutputDebugString("Failed to load Model: ");
 		OutputDebugString(fileName);
 		OutputDebugString("\n");
 	}
