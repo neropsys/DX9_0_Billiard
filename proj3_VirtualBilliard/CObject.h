@@ -10,7 +10,7 @@ class CObject{
 public:
 	CObject();
 	virtual ~CObject();
-	virtual bool hasIntersected(CSphere& object) = 0;
+	virtual bool hasIntersected(CSphere& object)=0;
 	virtual void hitBy(CSphere& object) = 0;
 	virtual void draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld) = 0;
 	virtual void destroy() = 0;
