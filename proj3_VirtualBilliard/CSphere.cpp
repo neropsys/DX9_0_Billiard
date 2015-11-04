@@ -6,21 +6,21 @@ CSphere::CSphere(){
 	m_radius = 0;
 	m_velocity_x = 0;
 	m_velocity_z = 0;
-	m_pSphereMesh = NULL;
+	m_pMesh = NULL;
 }
 CSphere::~CSphere(){}
 bool CSphere::create(IDirect3DDevice9* pDevice, D3DXCOLOR color){
 	if (!CObject::create(pDevice, color))
 		return false;
-	if (FAILED(D3DXCreateSphere(pDevice, getRadius(), 50, 50, &m_pSphereMesh, NULL)))
+	if (FAILED(D3DXCreateSphere(pDevice, getRadius(), 50, 50, &m_pMesh, NULL)))
 		return false;
 	return true;
 }
 void CSphere::destroy(){
 
-	if (m_pSphereMesh != NULL) {
-		m_pSphereMesh->Release();
-		m_pSphereMesh = NULL;
+	if (m_pMesh != NULL) {
+		m_pMesh->Release();
+		m_pMesh = NULL;
 	}
 	if (m_effect != NULL){
 		m_effect->Release();
@@ -38,7 +38,7 @@ void CSphere::draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld)
 	pDevice->SetTransform(D3DTS_WORLD, &mWorld);
 	pDevice->MultiplyTransform(D3DTS_WORLD, &m_mLocal);
 	pDevice->SetMaterial(&m_mtrl);
-	m_pSphereMesh->DrawSubset(0);
+	m_pMesh->DrawSubset(0);
 }
 bool CSphere::hasIntersected(CSphere& ball)
 {
@@ -89,4 +89,34 @@ void CSphere::setPosition(float x, float y, float z){
 	m_x = x;	m_y = y;	m_z = z;
 	D3DXMatrixTranslation(&m, x, y, z);
 	setLocalTransform(m);
+}
+LPD3DXEFFECT CSphere::LoadShader(IDirect3DDevice9* pDevice, const char* fileName){
+	LPD3DXEFFECT ret = NULL;
+	LPD3DXBUFFER pError = NULL;
+	DWORD dwShaderFlags = 0;
+#if _DEBUG
+	dwShaderFlags |= D3DXSHADER_DEBUG;
+#endif
+	D3DXCreateEffectFromFile(pDevice, fileName, NULL, NULL, dwShaderFlags, NULL, &ret, &pError);
+	if (!ret && pError){
+		int size = pError->GetBufferSize();
+		void* ack = pError->GetBufferPointer();
+		if (ack){
+			char* str = new char[size];
+			sprintf(str, (const char*)ack, size);
+			OutputDebugString(str);
+			delete[] str;
+		}
+	}
+	return ret;
+
+}
+LPDIRECT3DTEXTURE9 LoadTexture(IDirect3DDevice9* pDevice, const char* fileName){
+	LPDIRECT3DTEXTURE9 ret = NULL;
+	if (FAILED(D3DXCreateTextureFromFile(pDevice, fileName, &ret))){
+		OutputDebugString("Failed to load texture: ");
+		OutputDebugString(fileName);
+		OutputDebugString("\n");
+	}
+	return ret;
 }

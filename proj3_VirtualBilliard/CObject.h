@@ -14,12 +14,15 @@ public:
 	virtual void hitBy(CSphere& object) = 0;
 	virtual void draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld) = 0;
 	virtual void destroy() = 0;
-	virtual void setLocalTransform(const D3DXMATRIX& mLocal) = 0;
+	void inline setLocalTransform(const D3DXMATRIX& mLocal) { m_mLocal = mLocal; }
 	virtual void setPosition(float x, float y, float z) = 0;
+	const inline D3DXMATRIX&  getLocalTransform(void) const { return m_mLocal; }
 protected:
 	bool create(IDirect3DDevice9* pDevice, D3DXCOLOR color = d3d::WHITE);
 	float m_x;
 	float m_y;
 	float m_z;
 	D3DMATERIAL9            m_mtrl;
+	D3DXMATRIX              m_mLocal;
+	ID3DXMesh*              m_pMesh;
 };
