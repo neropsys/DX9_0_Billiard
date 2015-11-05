@@ -23,7 +23,7 @@ public:
 	void hitBy(CSphere& ball) override;
 
 	void setPosition(float x, float y, float z) override;
-
+	const D3DXVECTOR3 inline getPosition(){ return D3DXVECTOR3(m_x, m_y, m_z); }
 	inline float getHeight() const { return M_HEIGHT; }
 
 private:

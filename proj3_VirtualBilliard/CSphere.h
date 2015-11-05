@@ -50,11 +50,8 @@ private:
 	float					m_velocity_z;
 	LPD3DXBUFFER			m_shaderCode;
 	ID3DXBuffer*			m_adj;
-	LPDIRECT3DVERTEXBUFFER9	m_vertices;
-	LPDIRECT3DINDEXBUFFER9	m_indices;
 	ID3DXEffect*			m_shader;
 	LPDIRECT3DTEXTURE9		m_texture;
-	LPD3DXMESH				m_pMesh;
 
 	LPD3DXBUFFER LoadShader(IDirect3DDevice9* pDevice, const char* fileName);
 	LPDIRECT3DTEXTURE9 LoadTexture(IDirect3DDevice9* pDevice, const char* fileName);

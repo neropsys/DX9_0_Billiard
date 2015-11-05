@@ -27,5 +27,5 @@ protected:
 	float m_z;
 	D3DMATERIAL9            m_mtrl;
 	D3DXMATRIX              m_mLocal;
-	ID3DXMesh*              m_pMesh;
+	LPD3DXMESH              m_pMesh;
 };

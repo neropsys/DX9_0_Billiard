@@ -49,6 +49,7 @@ void CSphere::destroy(){
 		m_adj = NULL;
 	}
 
+
 }
 void CSphere::draw(IDirect3DDevice9* pDevice,
 	const D3DXMATRIX& mWorld,
