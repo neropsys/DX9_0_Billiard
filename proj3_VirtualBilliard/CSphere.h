@@ -4,7 +4,6 @@
 #define SPHERE_VS_NAME "SphereVS.hlsl"
 #define SPHERE_PS_NAME "SpherePS.hlsl"
 #define SPHERE_TEXTURE "checkered.png"
-#define SPHERE_MODEL "Sphere.x"
 class CSphere : public CObject{
 public:
 	CSphere();
@@ -39,14 +38,26 @@ public:
 	}
 
 private:
+#define FVF_VERTEX D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX1
+	struct Vertex{
+		D3DXVECTOR3 pos;
+		D3DXVECTOR3 norm;
+		float tu;
+		float tv;
+	};
 	float                   m_radius;
 	float					m_velocity_x;
 	float					m_velocity_z;
-	LPD3DXEFFECT			m_effect;
-	//LPD3DXBUFFER			m_effect;
+	LPD3DXBUFFER			m_shaderCode;
+	ID3DXBuffer*			m_adj;
+	LPDIRECT3DVERTEXBUFFER9	m_vertices;
+	LPDIRECT3DINDEXBUFFER9	m_indices;
+	ID3DXEffect*			m_shader;
 	LPDIRECT3DTEXTURE9		m_texture;
-	LPD3DXEFFECT LoadShader(IDirect3DDevice9* pDevice, const char* fileName);
+	LPD3DXMESH				m_pMesh;
+
+	LPD3DXBUFFER LoadShader(IDirect3DDevice9* pDevice, const char* fileName);
 	LPDIRECT3DTEXTURE9 LoadTexture(IDirect3DDevice9* pDevice, const char* fileName);
-	LPD3DXMESH LoadModel(IDirect3DDevice9* pDevice, const char* fileName);
+	LPD3DXMESH createMesh(IDirect3DDevice9* pDevice, float rad, UINT slices, UINT stacks);
 	void setPosition(float x, float y, float z) override;
 };

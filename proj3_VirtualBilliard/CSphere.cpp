@@ -10,21 +10,20 @@ CSphere::CSphere(){
 }
 CSphere::~CSphere(){}
 bool CSphere::create(IDirect3DDevice9* pDevice, D3DXCOLOR color){
-	if (!CObject::create(pDevice, color))
-		return false;/*
+	//if (!CObject::create(pDevice, color))
+	//return false;
+	
 	m_texture = LoadTexture(pDevice, SPHERE_TEXTURE);
 	if (!m_texture)
 		return false;
+		
+	//m_shaderCode = LoadShader(pDevice, SPHERE_VS_NAME);
+	//if (!m_shaderCode)
+		//return false;
+ 
+	m_pMesh = createMesh(pDevice, getRadius(), 50, 50);
 
-	m_effect = LoadShader(pDevice, SPHERE_VS_NAME);
-	if (!m_effect)
-		return false;*/
-
-	m_pMesh = LoadModel(pDevice, SPHERE_MODEL);
-	if (!m_pMesh)
-		return false;
-
-
+	//m_vertices->
 	return true;
 }
 void CSphere::destroy(){
@@ -33,14 +32,23 @@ void CSphere::destroy(){
 		m_pMesh->Release();
 		m_pMesh = NULL;
 	}
-	if (m_effect != NULL){
-		m_effect->Release();
-		m_effect = NULL;
+	if (m_shaderCode != NULL){
+		m_shaderCode->Release();
+		m_shaderCode = NULL;
 	}
 	if (m_texture != NULL){
 		m_texture->Release();
 		m_texture = NULL;
 	}
+	if (m_shader != NULL){
+		m_shader->Release();
+		m_shader = NULL;
+	}
+	if (m_adj != NULL){
+		m_adj->Release();
+		m_adj = NULL;
+	}
+
 }
 void CSphere::draw(IDirect3DDevice9* pDevice,
 	const D3DXMATRIX& mWorld,
@@ -52,7 +60,11 @@ void CSphere::draw(IDirect3DDevice9* pDevice,
 	
 	pDevice->SetTransform(D3DTS_WORLD, &mWorld);
 	pDevice->MultiplyTransform(D3DTS_WORLD, &m_mLocal);
-	pDevice->SetMaterial(&m_mtrl);
+	//pDevice->SetMaterial(&m_mtrl);
+	pDevice->SetTexture(0, m_texture);
+	pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	pDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
 	m_pMesh->DrawSubset(0);
 	/*
 	pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
@@ -132,13 +144,40 @@ void CSphere::setPosition(float x, float y, float z){
 	D3DXMatrixTranslation(&m, x, y, z);
 	setLocalTransform(m);
 }
-LPD3DXEFFECT CSphere::LoadShader(IDirect3DDevice9* pDevice, const char* fileName){
-	LPD3DXEFFECT ret = NULL;
+LPD3DXBUFFER CSphere::LoadShader(IDirect3DDevice9* pDevice, const char* fileName){
 	LPD3DXBUFFER pError = NULL;
+	LPD3DXBUFFER ret = NULL;
 	DWORD dwShaderFlags = 0;
 #if _DEBUG
 	dwShaderFlags |= D3DXSHADER_DEBUG;
 #endif
+	/*
+	D3DXCompileShaderFromFile(
+		SPHERE_VS_NAME,
+		0,
+		0,
+		"main",
+		"vs_3_0",
+		dwShaderFlags,
+		&ret,
+		&pError,
+		&m_constTable);
+	if (!ret && pError){
+		int size = pError->GetBufferSize();
+		void* ack = pError->GetBufferPointer();
+		if (ack){
+			char* str = new char[size];
+			sprintf(str, (const char*)ack, size);
+			OutputDebugString(str);
+			delete[] str;
+			//d3d::Release<LPD3DXBUFFER>(pError);
+		}
+	}
+	if (FAILED(pDevice->CreateVertexShader((DWORD*)ret->GetBufferPointer(), &m_shader))){
+		OutputDebugString("Failed to create vertex shader");
+		return NULL;
+	}
+	
 	//D3DXCompileShaderFromFile(fileName, 0, 0, "main", "vs_3_0", dwShaderFlags, &m_effect, &pError, NULL);
 	D3DXCreateEffectFromFile(pDevice, fileName, NULL, NULL, dwShaderFlags, NULL, &ret, &pError);
 	if (!ret && pError){
@@ -150,7 +189,7 @@ LPD3DXEFFECT CSphere::LoadShader(IDirect3DDevice9* pDevice, const char* fileName
 			OutputDebugString(str);
 			delete[] str;
 		}
-	}
+	}*/
 	return ret;
 
 }
@@ -163,12 +202,27 @@ LPDIRECT3DTEXTURE9 CSphere::LoadTexture(IDirect3DDevice9* pDevice, const char* f
 	}
 	return ret;
 }
-LPD3DXMESH CSphere::LoadModel(IDirect3DDevice9* pDevice, const char* fileName){
-	LPD3DXMESH ret = NULL;
-	if (FAILED(D3DXLoadMeshFromX(fileName, D3DXMESH_SYSTEMMEM, pDevice, NULL, NULL, NULL, NULL, &ret))){
-		OutputDebugString("Failed to load Model: ");
-		OutputDebugString(fileName);
-		OutputDebugString("\n");
+LPD3DXMESH CSphere::createMesh(IDirect3DDevice9* pDevice, float rad, UINT slices, UINT stacks){
+	LPD3DXMESH mesh;
+	if (FAILED(D3DXCreateSphere(pDevice, rad, slices, stacks, &mesh, NULL))){
+		return NULL;
 	}
-	return ret;
+
+	LPD3DXMESH newMesh;
+	if (FAILED(mesh->CloneMeshFVF(D3DXMESH_SYSTEMMEM, FVF_VERTEX, pDevice, &newMesh))){
+		return mesh;
+	}
+	mesh->Release();
+	Vertex* pVerts;
+	if (SUCCEEDED(newMesh->LockVertexBuffer(0, (LPVOID*)&pVerts))){
+		int numVerts = newMesh->GetNumVertices();
+		for (int i = 0; i < numVerts; i++){
+			pVerts->tu = asin(pVerts->norm.x) / D3DX_PI + .5f;
+			pVerts->tv = asin(pVerts->norm.y) / D3DX_PI + .5f;
+			pVerts++;
+		}
+		newMesh->UnlockVertexBuffer();
+	}
+	return newMesh;
+
 }
