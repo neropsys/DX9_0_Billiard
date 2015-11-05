@@ -294,7 +294,6 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 		case 0x52:
 		{
-			Cleanup();
 			Setup();
 			break;
 		}
