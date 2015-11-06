@@ -172,6 +172,10 @@ bool Display(float timeDelta)
 			}
 		}
 
+		for (i = 0; i < 4; i++){
+			g_sphere[i].ballUpdate(timeDelta);
+		}
+
 		// draw plane, walls, and spheres
 		g_legoPlane.draw(Device, g_mWorld, g_mView, g_mProj);
 		for (i=0;i<4;i++) 	{

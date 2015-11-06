@@ -1,4 +1,5 @@
 #include "CWall.h"
+#include "CSphere.h"
 
 CWall::CWall(){
 	D3DXMatrixIdentity(&m_mLocal);
@@ -44,12 +45,54 @@ void CWall::draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld,
 	pDevice->SetMaterial(&m_mtrl);
 	m_pMesh->DrawSubset(0);
 }
+//Determines whether the ball has intersected the wall
 bool CWall::hasIntersected(CSphere& ball){
-	// Insert your code here.
+	// There are two ways to determine intersection
+	// |z - z'| <= r		|		|x - x'| <= r
+	// |z + vzt - z'| <= r	|		|x + vxt - x'| <= r
+	// After Collision
+	// z = z' - r | x = x' - r
+	
+	D3DXVECTOR3 cord = ball.getCenter();
+	
+	if (cord.x >= (4.5 - M_RADIUS))  return true;
+		//cord.x = 4.5 - M_RADIUS;
+	if (cord.x <= (-4.5 + M_RADIUS)) return true;
+		//cord.x = -4.5 + M_RADIUS;
+	if (cord.z <= (-3 + M_RADIUS))	 return true;
+		//cord.z = -3 + M_RADIUS;
+	if (cord.z >= (3 - M_RADIUS))	 return true;
+		//cord.z = 3 - M_RADIUS;
+	
 	return false;
 }
+//changes x-velocity and z-velocity of the ball after collision
 void CWall::hitBy(CSphere& ball){
-	// Insert your code here.
+	
+	if (!this->hasIntersected(ball)) return;
+
+	D3DXVECTOR3 cord = ball.getCenter();
+
+	if (cord.x >= (4.5 - M_RADIUS)) // 공의 X값이 우측으로 치우친 경우 ( 우측 벽에 부딪힌 경우 )
+	{
+		ball.setCenter(4.5 - M_RADIUS, cord.y, cord.z);
+		ball.setPower(ball.getVelocity_X()*(-0.5), ball.getVelocity_Z()); // 방향 전환
+	}
+	if (cord.x <= (-4.5 + M_RADIUS)) // 공의 X값이 좌측으로 치우친 경우 ( 좌측 벽에 부딪힌 경우 )
+	{
+		ball.setCenter(-4.5 + M_RADIUS, cord.y, cord.z);
+		ball.setPower(ball.getVelocity_X()*(-0.5), ball.getVelocity_Z()); // 방향 전환
+	}
+	if (cord.z <= (-3 + M_RADIUS)) // 공의 Z값이 아래로 치우친 경우 ( 하측 벽에 부딪힌 경우 )
+	{
+		ball.setCenter(cord.x, cord.y, -3 + M_RADIUS);
+		ball.setPower(ball.getVelocity_X(), ball.getVelocity_Z()*(-0.5)); // 방향 전환
+	}
+	if (cord.z >= (3 - M_RADIUS))  // 공의 Z값이 위로 치우친 경우 ( 상측 벽에 부딪힌 경우 )
+	{
+		ball.setCenter(cord.x, cord.y, 3 - M_RADIUS);
+		ball.setPower(ball.getVelocity_X(), ball.getVelocity_Z()*(-0.5)); // 방향 전환
+	}
 }
 
 void CWall::setPosition(float x, float y, float z)
