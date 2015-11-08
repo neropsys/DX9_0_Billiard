@@ -1,6 +1,7 @@
-float4x4 gWorldMatrix : World;
-float4x4 gViewMatrix : View;
-float4x4 gProjectionMatrix : Projection;
+matrix gWorldMatrix : World;
+matrix gViewMatrix : View;
+matrix gProjectionMatrix : Projection;
+
 struct VS_INPUT
 {
 	float4 mPosition : POSITION;
@@ -19,23 +20,26 @@ struct VS_OUTPUT
 VS_OUTPUT vs_main(VS_INPUT Input)
 {
 	VS_OUTPUT Output;
+	Output.mPosition = mul(Input.mPosition, gWorldMatrix);
+	Output.mPosition = mul(Output.mPosition, gViewMatrix);
+	Output.mPosition = mul(Output.mPosition, gProjectionMatrix);
 	Input.mPosition.w = 1.0f;
 	Output.Normal = Input.Normal;
 	Output.mTexCoord = Input.mTexCoord;
 	return Output;
 }
 
-
 texture DiffuseMap : TEX2D;
-
 sampler DiffuseSampler = sampler_state
 {
 	Texture = (DiffuseMap);
+	Filter = MIN_MAG_MIP_LINEAR;
 	
 };
 
 struct PS_INPUT{
-	float4 position : SV_POSITION;
+	float4 mPosition : POSITION;
+	float4 Normal : NORMAL0;
 	float2 mTexCoord : TEXCOORD0;
 };
 
@@ -53,7 +57,7 @@ float4 ps_main(PS_INPUT Input) : COLOR
 //--------------------------------------------------------------//
 technique ColorShader
 {
-	pass Pass_0
+	pass Pass_1
 	{
 		VertexShader = compile vs_3_0 vs_main();
 		PixelShader = compile ps_3_0 ps_main();

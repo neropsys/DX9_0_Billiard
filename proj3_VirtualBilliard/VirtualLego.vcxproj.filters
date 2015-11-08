@@ -58,7 +58,7 @@
     <FxCompile Include="SpherePS.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
-    <FxCompile Include="SphereEffect.hlsl">
+    <FxCompile Include="SphereEffect.fx">
       <Filter>Resource Files</Filter>
     </FxCompile>
   </ItemGroup>

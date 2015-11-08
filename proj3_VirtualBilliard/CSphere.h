@@ -1,7 +1,7 @@
 #pragma once
 #include "CObject.h"
 #include "d3dUtility.h"
-#define SPHERE_EFFECT "SphereEffect.hlsl"
+#define SPHERE_EFFECT "SphereEffect.fx"
 #define SPHERE_PS_NAME "SpherePS.hlsl"
 #define SPHERE_TEXTURE "checkered.png"
 class CSphere : public CObject{

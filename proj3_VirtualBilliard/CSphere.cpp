@@ -59,10 +59,11 @@ void CSphere::draw(IDirect3DDevice9* pDevice,
 	
 	pDevice->SetTransform(D3DTS_WORLD, &mWorld);
 	pDevice->MultiplyTransform(D3DTS_WORLD, &m_mLocal);
-	m_effect->SetMatrix("gWorldMatrix", &mWorld);
+	m_effect->SetMatrix("gWorldMatrix", &m_mLocal);
 	m_effect->SetMatrix("gViewMatrix", &mView);
 	m_effect->SetMatrix("gProjectionMatrix", &mProj);
 	m_effect->SetTexture("DiffuseMap", m_texture);
+	//m_effect->
 
 	pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	pDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
@@ -74,6 +75,7 @@ void CSphere::draw(IDirect3DDevice9* pDevice,
 		for (UINT i = 0; i < numPass; ++i)
 		{
 			m_effect->BeginPass(i);
+		
 			m_pMesh->DrawSubset(0);
 			m_effect->EndPass();
 		}
@@ -256,9 +258,12 @@ LPD3DXMESH CSphere::createMesh(IDirect3DDevice9* pDevice, float rad, UINT slices
 	//DWORD options = mesh->GetOptions();
 
 	LPD3DXMESH newMesh;
-	if (FAILED(mesh->CloneMeshFVF(D3DXMESH_SYSTEMMEM, FVF_VERTEX, pDevice, &newMesh))){
-		return mesh;
-	}
+	mesh->CloneMesh(D3DXMESH_SYSTEMMEM, decl, pDevice, &newMesh);
+
+
+	//if (FAILED(mesh->CloneMeshFVF(D3DXMESH_SYSTEMMEM, FVF_VERTEX, pDevice, &newMesh))){
+	//	return mesh;
+	//}
 	//if (FAILED(D3DXCreateMesh(numFaces, numVertices, options, decl, pDevice, &newMesh))){
 	//	return mesh;
 	//}
@@ -275,6 +280,17 @@ LPD3DXMESH CSphere::createMesh(IDirect3DDevice9* pDevice, float rad, UINT slices
 		}
 		newMesh->UnlockVertexBuffer();
 	}
+
+	/*
+	if (SUCCEEDED(newMesh->LockVertexBuffer(0, (LPVOID*)&pVerts))){
+		int numVerts = newMesh->GetNumVertices();
+		for (int i = 0; i < numVerts; i++){
+			pVerts->tu = asin(pVerts->norm.x) / D3DX_PI + .5f;
+			pVerts->tv = asin(pVerts->norm.y) / D3DX_PI + .5f;
+			pVerts++;
+		}
+		newMesh->UnlockVertexBuffer();
+	}*/
 	mesh->Release();
 	return newMesh;
 

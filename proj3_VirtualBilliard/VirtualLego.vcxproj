@@ -161,7 +161,7 @@
     <ClInclude Include="CObject.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="SphereEffect.hlsl">
+    <FxCompile Include="SphereEffect.fx">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
