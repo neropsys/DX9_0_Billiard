@@ -51,17 +51,19 @@ void CSphere::destroy(){
 }
 void CSphere::draw(IDirect3DDevice9* pDevice,
 	const D3DXMATRIX& mWorld,
-	const D3DXMATRIX& mView,
-	const D3DXMATRIX& mProj)
+	const D3DXMATRIX& mView)
 {
 	if (NULL == pDevice)
 		return;
 	
 	pDevice->SetTransform(D3DTS_WORLD, &mWorld);
+	D3DXMATRIX proj;
+	pDevice->GetTransform(D3DTS_PROJECTION, &proj);
 	pDevice->MultiplyTransform(D3DTS_WORLD, &m_mLocal);
-	m_effect->SetMatrix("gWorldMatrix", &m_mLocal);
+	m_effect->SetMatrix("gLocalMatrix", &m_mLocal);
+	m_effect->SetMatrix("gWorldMatrix", &mWorld);
 	m_effect->SetMatrix("gViewMatrix", &mView);
-	m_effect->SetMatrix("gProjectionMatrix", &mProj);
+	m_effect->SetMatrix("gProjectionMatrix", &proj);
 	m_effect->SetTexture("DiffuseMap", m_texture);
 	//m_effect->
 
@@ -75,46 +77,12 @@ void CSphere::draw(IDirect3DDevice9* pDevice,
 		for (UINT i = 0; i < numPass; ++i)
 		{
 			m_effect->BeginPass(i);
-		
 			m_pMesh->DrawSubset(0);
 			m_effect->EndPass();
 		}
 	}
 	m_effect->End();
 
-	//pDevice->SetMaterial(&m_mtrl);
-	/*
-	pDevice->SetTexture(0, m_texture);
-	pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	pDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
-	m_pMesh->DrawSubset(0);
-	
-	pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-
-	m_effect->SetMatrix("gWorld", &mWorld);
-	m_effect->SetMatrix("gView", &mView);
-	m_effect->SetMatrix("gProj", &mProj);
-	m_effect->SetTexture("DiffuseMap", m_texture);
-	//pDevice->SetTexture(0, m_texture);
-	UINT numPass = 0;
-	D3DXHANDLE hTech = m_effect->GetTechniqueByName("SphereVS");
-	m_effect->SetTechnique(hTech);
-	
-	m_effect->Begin(&numPass, NULL);
-	{
-		for (UINT i = 0; i < numPass; ++i)
-		{
-			m_effect->BeginPass(i);
-			{
-				m_pMesh->DrawSubset(0);
-			}
-			m_effect->EndPass();
-		}
-	}
-	m_effect->End();
-	*/
 
 }
 bool CSphere::hasIntersected(CSphere& ball)
@@ -274,8 +242,10 @@ LPD3DXMESH CSphere::createMesh(IDirect3DDevice9* pDevice, float rad, UINT slices
 	if (SUCCEEDED(newMesh->LockVertexBuffer(0, (LPVOID*)&pVerts))){
 		int numVerts = newMesh->GetNumVertices();
 		for (int i = 0; i < numVerts; i++){
-			pVerts->tu = asin(pVerts->norm.x) / D3DX_PI + .5f;
-			pVerts->tv = asin(pVerts->norm.y) / D3DX_PI + .5f;
+			D3DXVECTOR3 v = pVerts->pos - getCenter();
+			D3DXVec3Normalize(&v, &v);
+			pVerts->tu = asin(v.x) / D3DX_PI + .5f;
+			pVerts->tv = asin(v.y) / D3DX_PI + .5f;
 			pVerts++;
 		}
 		newMesh->UnlockVertexBuffer();

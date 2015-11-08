@@ -1,7 +1,7 @@
+matrix gLocalMatrix : Local;
 matrix gWorldMatrix : World;
 matrix gViewMatrix : View;
 matrix gProjectionMatrix : Projection;
-
 struct VS_INPUT
 {
 	float4 mPosition : POSITION;
@@ -20,7 +20,8 @@ struct VS_OUTPUT
 VS_OUTPUT vs_main(VS_INPUT Input)
 {
 	VS_OUTPUT Output;
-	Output.mPosition = mul(Input.mPosition, gWorldMatrix);
+	Output.mPosition = mul(Input.mPosition, gLocalMatrix);
+	Output.mPosition = mul(Output.mPosition, gWorldMatrix);
 	Output.mPosition = mul(Output.mPosition, gViewMatrix);
 	Output.mPosition = mul(Output.mPosition, gProjectionMatrix);
 	Input.mPosition.w = 1.0f;

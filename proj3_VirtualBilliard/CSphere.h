@@ -13,8 +13,7 @@ public:
 	void destroy(void) override;
 
 	void draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld,
-		const D3DXMATRIX& mView,
-		const D3DXMATRIX& mProj) override;
+		const D3DXMATRIX& mView) override;
 
 	bool hasIntersected(CSphere& ball) override;
 	void hitBy(CSphere& ball) override;
