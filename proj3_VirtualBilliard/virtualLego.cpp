@@ -158,18 +158,18 @@ bool Display(float timeDelta)
 		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00afafaf, 1.0f, 0);
 		Device->BeginScene();
 		
-		// update the position of each ball. during update, check whether each ball hit by walls.
-		for( i = 0; i < 4; i++) {
-			g_sphere[i].ballUpdate(timeDelta);
-			for(j = 0; j < 4; j++){ g_legowall[i].hitBy(g_sphere[j]); }
-		}
-
 		// check whether any two balls hit together and update the direction of balls
 		for(i = 0 ;i < 4; i++){
 			for(j = 0 ; j < 4; j++) {
 				if(i >= j) {continue;}
 				g_sphere[i].hitBy(g_sphere[j]);
 			}
+		}
+		
+		// update the position of each ball. during update, check whether each ball hit by walls.
+		for( i = 0; i < 4; i++) {
+			for(j = 0; j < 4; j++){ g_legowall[i].hitBy(g_sphere[j]); }
+			g_sphere[i].ballUpdate(timeDelta);
 		}
 
 		// draw plane, walls, and spheres

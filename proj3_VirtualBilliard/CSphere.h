@@ -21,6 +21,7 @@ public:
 
 	void ballUpdate(float timeDiff);
 
+	//caution : getters and setters for pre_velocity_x, pre_velocity_z, isChanged are added
 	double inline getVelocity_X() { return this->m_velocity_x; }
 	double inline getVelocity_Z() { return this->m_velocity_z; }
 	float inline getRadius(void)  const { return (float)(M_RADIUS); }
@@ -29,7 +30,7 @@ public:
 		D3DXVECTOR3 org(m_x, m_y, m_z);
 		return org;
 	}
-
+	
 	void setCenter(float x, float y, float z);
 	void inline setPower(double vx, double vz)
 	{
