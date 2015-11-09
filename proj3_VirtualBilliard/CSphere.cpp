@@ -185,17 +185,6 @@ void CSphere::ballUpdate(float timeDiff)
 		float tX = cord.x + TIME_SCALE*timeDiff*m_velocity_x;
 		float tZ = cord.z + TIME_SCALE*timeDiff*m_velocity_z;
 
-		//correction of position of ball
-		/* Please uncomment this part because this correction of ball position is necessary when a ball collides with a wall
-		if (tX >= (4.5 - M_RADIUS))
-			tX = 4.5 - M_RADIUS;
-		else if (tX <= (-4.5 + M_RADIUS))
-			tX = -4.5 + M_RADIUS;
-		else if (tZ <= (-3 + M_RADIUS))
-			tZ = -3 + M_RADIUS;
-		else if (tZ >= (3 - M_RADIUS))
-			tZ = 3 - M_RADIUS;
-		*/
 		this->setCenter(tX, cord.y, tZ);
 	}
 	else { this->setPower(0, 0); }
