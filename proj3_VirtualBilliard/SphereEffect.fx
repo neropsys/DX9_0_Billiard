@@ -2,10 +2,11 @@ matrix gLocalMatrix : Local;
 matrix gWorldMatrix : World;
 matrix gViewMatrix : View;
 matrix gProjectionMatrix : Projection;
+float4 gWorldLightPosition;
 struct VS_INPUT
 {
 	float4 mPosition : POSITION;
-	float4 Normal : NORMAL0;
+	float3 Normal : NORMAL0;
 	float2 mTexCoord : TEXCOORD0;
 
 };
@@ -13,7 +14,7 @@ struct VS_INPUT
 struct VS_OUTPUT
 {
 	float4 mPosition : POSITION;
-	float4 Normal : NORMAL0;
+	float3 mDiffuse : TEXCOORD1;
 	float2 mTexCoord : TEXCOORD0;
 };
 
@@ -22,10 +23,20 @@ VS_OUTPUT vs_main(VS_INPUT Input)
 	VS_OUTPUT Output;
 	Output.mPosition = mul(Input.mPosition, gLocalMatrix);
 	Output.mPosition = mul(Output.mPosition, gWorldMatrix);
+
+	float3 lightDir = Output.mPosition.xyz - gWorldLightPosition.xyz;
+	lightDir = normalize(lightDir);
+
+
 	Output.mPosition = mul(Output.mPosition, gViewMatrix);
 	Output.mPosition = mul(Output.mPosition, gProjectionMatrix);
+
+	float3 worldNormal = mul(Input.Normal, (float3x3)gWorldMatrix);
+	worldNormal = normalize(worldNormal);
+	Output.mDiffuse = dot(-lightDir, worldNormal);
+
 	Input.mPosition.w = 1.0f;
-	Output.Normal = Input.Normal;
+	Output.mDiffuse = Input.Normal;
 	Output.mTexCoord = Input.mTexCoord;
 	return Output;
 }
@@ -40,16 +51,18 @@ sampler DiffuseSampler = sampler_state
 
 struct PS_INPUT{
 	float4 mPosition : POSITION;
-	float4 Normal : NORMAL0;
+	float3 mDiffuse : TEXCOORD1;
 	float2 mTexCoord : TEXCOORD0;
 };
 
 
 float4 ps_main(PS_INPUT Input) : COLOR
 {
+	float3 diffuse = saturate(Input.mDiffuse);
+
 	float4 albedo = tex2D(DiffuseSampler, Input.mTexCoord);
 	return albedo;
-	//return float4(0.0f, 0.0f, 1.0f, 1.0f);
+	//return float4(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 

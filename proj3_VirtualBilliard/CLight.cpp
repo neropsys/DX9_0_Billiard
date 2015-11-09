@@ -65,4 +65,3 @@ void CLight::draw(IDirect3DDevice9* pDevice)
 	pDevice->SetMaterial(&d3d::WHITE_MTRL);
 	m_pMesh->DrawSubset(0);
 }
-

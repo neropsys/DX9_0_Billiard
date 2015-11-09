@@ -104,8 +104,8 @@ bool Setup()
     ::ZeroMemory(&lit, sizeof(lit));
     lit.Type         = D3DLIGHT_POINT;
     lit.Diffuse      = d3d::WHITE; 
-	lit.Specular     = d3d::WHITE * 0.9f;
-    lit.Ambient      = d3d::WHITE * 0.9f;
+	lit.Specular	 = d3d::WHITE;
+	lit.Ambient = d3d::WHITE;
     lit.Position     = D3DXVECTOR3(0.0f, 3.0f, 0.0f);
     lit.Range        = 100.0f;
     lit.Attenuation0 = 0.0f;
@@ -235,7 +235,7 @@ bool Display(float timeDelta)
 		g_legoPlane.draw(Device, g_mWorld, g_mView);
 		for (i=0;i<4;i++) 	{
 			g_legowall[i].draw(Device, g_mWorld, g_mView);
-			g_sphere[i].draw(Device, g_mWorld, g_mView);
+			g_sphere[i].tempdraw(Device, g_mWorld, g_mView, g_light.getPosition4());//  draw(Device, g_mWorld, g_mView);
 		}
 		g_target_blueball.draw(Device, g_mWorld, g_mView);
 
