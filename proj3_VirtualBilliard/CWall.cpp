@@ -1,5 +1,6 @@
 #include "CWall.h"
 #include "CSphere.h"
+#include <d3dx9math.h>
 
 CWall::CWall(){
 	D3DXMatrixIdentity(&m_mLocal);
@@ -75,22 +76,22 @@ void CWall::hitBy(CSphere& ball){
 	if (cord.x >= (4.5 - M_RADIUS)) // 공의 X값이 우측으로 치우친 경우 ( 우측 벽에 부딪힌 경우 )
 	{
 		ball.setCenter(4.5 - M_RADIUS, cord.y, cord.z);
-		ball.setPower(ball.getVelocity_X()*(-0.5), ball.getVelocity_Z()); // 방향 전환
+		ball.setPower(ball.getVelocity().x*(-0.5), ball.getVelocity().z); // 방향 전환
 	}
 	if (cord.x <= (-4.5 + M_RADIUS)) // 공의 X값이 좌측으로 치우친 경우 ( 좌측 벽에 부딪힌 경우 )
 	{
 		ball.setCenter(-4.5 + M_RADIUS, cord.y, cord.z);
-		ball.setPower(ball.getVelocity_X()*(-0.5), ball.getVelocity_Z()); // 방향 전환
+		ball.setPower(ball.getVelocity().x*(-0.5), ball.getVelocity().z); // 방향 전환
 	}
 	if (cord.z <= (-3 + M_RADIUS)) // 공의 Z값이 아래로 치우친 경우 ( 하측 벽에 부딪힌 경우 )
 	{
 		ball.setCenter(cord.x, cord.y, -3 + M_RADIUS);
-		ball.setPower(ball.getVelocity_X(), ball.getVelocity_Z()*(-0.5)); // 방향 전환
+		ball.setPower(ball.getVelocity().x, ball.getVelocity().z*(-0.5)); // 방향 전환
 	}
 	if (cord.z >= (3 - M_RADIUS))  // 공의 Z값이 위로 치우친 경우 ( 상측 벽에 부딪힌 경우 )
 	{
 		ball.setCenter(cord.x, cord.y, 3 - M_RADIUS);
-		ball.setPower(ball.getVelocity_X(), ball.getVelocity_Z()*(-0.5)); // 방향 전환
+		ball.setPower(ball.getVelocity().x, ball.getVelocity().z*(-0.5)); // 방향 전환
 	}
 }
 

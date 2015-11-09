@@ -27,8 +27,7 @@ public:
 	void ballUpdate(float timeDiff);
 
 	//caution : getters and setters for pre_velocity_x, pre_velocity_z, isChanged are added
-	double inline getVelocity_X() { return this->m_velocity_x; }
-	double inline getVelocity_Z() { return this->m_velocity_z; }
+	D3DXVECTOR3 inline getVelocity(){ return this->velocity; }
 	float inline getRadius(void)  const { return (float)(M_RADIUS); }
 	const inline D3DXVECTOR3 getCenter(void) const
 	{
@@ -39,11 +38,16 @@ public:
 	void setCenter(float x, float y, float z);
 	void inline setPower(double vx, double vz)
 	{
-		this->m_velocity_x = vx;
-		this->m_velocity_z = vz;
+		this->velocity.x = vx;
+		this->velocity.z = vz;
 	}
-	bool isStop(){
-		return (m_velocity_x == 0 && m_velocity_z == 0);
+
+	void inline setPower(D3DXVECTOR3 velocity){
+		this->velocity = velocity;
+	}
+
+	bool inline isStop(){
+		return (velocity.x == 0 && velocity.z == 0);
 		//x축 속도와 z축 속도가 모두 0일 경우 true 반환
 	}
 	static inline bool IsAllStop(CSphere r1, CSphere r2, CSphere w, CSphere y){
@@ -59,10 +63,8 @@ private:
 		float tu;            // texture coordinates
 		float tv;
 	};
-
+	D3DXVECTOR3				velocity;
 	float                   m_radius;
-	float					m_velocity_x;
-	float					m_velocity_z;
 	LPD3DXBUFFER			m_shaderCode;
 	ID3DXEffect*			m_effect;
 	LPDIRECT3DTEXTURE9		m_texture;
@@ -74,4 +76,5 @@ private:
 	LPDIRECT3DTEXTURE9 LoadTexture(IDirect3DDevice9* pDevice, const char* fileName);
 	LPD3DXMESH createMesh(IDirect3DDevice9* pDevice, float rad, UINT slices, UINT stacks);
 	void setPosition(float x, float y, float z) override;
+	void moveCenter(D3DXVECTOR3 velocity);
 };
