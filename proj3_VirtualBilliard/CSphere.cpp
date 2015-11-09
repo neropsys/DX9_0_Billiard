@@ -138,8 +138,8 @@ void CSphere::draw(IDirect3DDevice9* pDevice,
 
 bool CSphere::hasIntersected(CSphere& ball)
 {
-	return CENTERDESTINATION(this->getCenter().x, ball.getCenter().x, this->getCenter().z, ball.getCenter().z) 
-		<= 2 * this->getRadius();
+	const D3DXVECTOR3 ret = ball.getCenter() - this->getCenter();
+	return D3DXVec3Length(&ret) < 2 * this->getRadius();
 	//프레임 위치 이용한 계산.
 }
 
@@ -154,9 +154,9 @@ void CSphere::hitBy(CSphere& ball){
 		D3DXVECTOR3 avec, a1, a2;
 
 		float dest;	//각각 벡터 v1과 v2의 x, z성분
- 		avec = ball.getCenter() - this->getCenter();
-		dest = CENTERDESTINATION(this->getCenter().x, ball.getCenter().x, this->getCenter().z, ball.getCenter().z);
-		avec /= dest;
+ 		const D3DXVECTOR3 centVec = ball.getCenter() - this->getCenter();
+		dest = D3DXVec3Length(&centVec);
+		avec = (ball.getCenter() - this->getCenter()) / dest;
 
 		
 		a1 = (D3DXVec3Dot(&avec, &this->velocity) * avec);
@@ -166,7 +166,7 @@ void CSphere::hitBy(CSphere& ball){
 		ball.setPower(ball.getVelocity() - a2 + a1);
 
 		//공을 떼어놓는다
-		ball.moveCenter((2 * ball.getRadius() - dest) * ball.getVelocity());
+		ball.moveCenter((2 * ball.getRadius() - dest) * ball.getVelocity() * 2);
 	}
 	//maybe spin will be written here.
 }
