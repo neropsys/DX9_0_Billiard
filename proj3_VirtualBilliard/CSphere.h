@@ -37,7 +37,10 @@ public:
 		this->m_velocity_x = vx;
 		this->m_velocity_z = vz;
 	}
-
+	bool isStop(){
+		return (m_velocity_x == 0 && m_velocity_z == 0);
+		//x축 속도와 z축 속도가 모두 0일 경우 true 반환
+	}
 private:
 	float                   m_radius;
 	float					m_velocity_x;
@@ -48,3 +51,8 @@ private:
 	LPDIRECT3DTEXTURE9 LoadTexture(IDirect3DDevice9* pDevice, const char* fileName);
 	void setPosition(float x, float y, float z) override;
 };
+
+bool isAllStop(CSphere r1, CSphere r2, CSphere w, CSphere y){
+	return r1.isStop() && r2.isStop() && w.isStop() && y.isStop();
+	//4개의 공이 모두 정지해 있을 경우 true 반환
+}
