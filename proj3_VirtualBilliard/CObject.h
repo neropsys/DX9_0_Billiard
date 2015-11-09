@@ -14,8 +14,7 @@ public:
 	virtual void hitBy(CSphere& object) = 0;
 	virtual void draw(IDirect3DDevice9* pDevice,
 					   const D3DXMATRIX& mWorld,
-					   const D3DXMATRIX& mView,
-					   const D3DXMATRIX& mproj) = 0;
+					   const D3DXMATRIX& mView) = 0;
 	virtual void destroy() = 0;
 	void inline setLocalTransform(const D3DXMATRIX& mLocal) { m_mLocal = mLocal; }
 	virtual void setPosition(float x, float y, float z) = 0;
@@ -27,5 +26,5 @@ protected:
 	float m_z;
 	D3DMATERIAL9            m_mtrl;
 	D3DXMATRIX              m_mLocal;
-	ID3DXMesh*              m_pMesh;
+	LPD3DXMESH              m_pMesh;
 };
