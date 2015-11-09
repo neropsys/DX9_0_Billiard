@@ -164,9 +164,17 @@ void CSphere::hitBy(CSphere& ball){
 
 		this->setPower(this->getVelocity() - a1 + a2);
 		ball.setPower(ball.getVelocity() - a2 + a1);
-
+		
 		//공을 떼어놓는다
-		ball.moveCenter((2 * ball.getRadius() - dest) * ball.getVelocity() * 2);
+		if (this->getPower() > ball.getPower()){
+			this->moveCenter((2 * this->getRadius() - dest) * avec * 2);
+		}
+		else{
+			ball.moveCenter((2 * this->getRadius() - dest) * avec * -2);
+		}
+		
+		
+		
 	}
 	//maybe spin will be written here.
 }

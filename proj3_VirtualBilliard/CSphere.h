@@ -42,6 +42,10 @@ public:
 		this->velocity.z = vz;
 	}
 
+	float inline getPower(){
+		return velocity.x * velocity.x + velocity.z * velocity.z;
+	}
+
 	void inline setPower(D3DXVECTOR3 velocity){
 		this->velocity = velocity;
 	}
