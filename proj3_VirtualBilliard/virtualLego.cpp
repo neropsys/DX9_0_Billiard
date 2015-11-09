@@ -205,6 +205,9 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:
         {
             switch (wParam) {
+			case VK_F1:
+				g_target_blueball.setCenter(.0f, (float)M_RADIUS, .0f);
+				break;
             case VK_ESCAPE:
 				::DestroyWindow(hwnd);
                 break;
@@ -232,8 +235,8 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		
 	case WM_MOUSEMOVE:
         {
-            int new_x = LOWORD(lParam);
-            int new_y = HIWORD(lParam);
+			int new_x = LOWORD(lParam);
+			int new_y = HIWORD(lParam);
 			float dx;
 			float dy;
 			
@@ -267,11 +270,15 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 isReset = true;
 				
 				if (LOWORD(wParam) & MK_RBUTTON) {
+					if (LOWORD(wParam) <= 0)
+						new_x = 0;
+					if (new_y <= 0)
+						new_y = 0;
 					dx = (old_x - new_x);// * 0.01f;
 					dy = (old_y - new_y);// * 0.01f;
 		
 					D3DXVECTOR3 coord3d=g_target_blueball.getCenter();
-					g_target_blueball.setCenter(coord3d.x+dx*(-0.007f),coord3d.y,coord3d.z+dy*0.007f );
+					g_target_blueball.setCenter(coord3d.x + dx*(-0.007f), coord3d.y, coord3d.z + dy*0.007f);
 				}
 				old_x = new_x;
 				old_y = new_y;
