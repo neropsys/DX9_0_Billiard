@@ -14,6 +14,7 @@
 #include "CSphere.h"
 #include "CWall.h"
 #include "CLight.h"
+#include "CText.h"
 #include <vector>
 #include <ctime>
 #include <cstdlib>
@@ -57,6 +58,8 @@ CSphere g_yellowSphere;*/
 CSphere	g_target_blueball;
 CLight	g_light;
 
+CText g_text;
+
 double g_camera_pos[3] = {0.0, 5.0, -8.0};
 
 // -----------------------------------------------------------------------------
@@ -81,6 +84,9 @@ bool Setup()
     if (false == g_legoPlane.create(Device, -1, -1, 9, 0.03f, 6, d3d::GREEN)) return false;
     //g_legoPlane.setPosition(0.0f, -0.0006f / 5, 0.0f);
 	
+
+	if (g_text.create(Device, Width, Height) == false) return false;
+
 	// create walls and set the position. note that there are four walls
 	if (false == g_legowall[0].create(Device, -1, -1, 9, 0.3f, 0.12f, d3d::DARKRED)) return false;
 	g_legowall[0].setPosition(0.0f, 0.12f, 3.06f);
@@ -136,13 +142,16 @@ bool Setup()
 	
 
 	g_light.setLight(Device, g_mWorld);
+
+
 	return true;
 }
 
 void Cleanup(void)
 {
-    //g_legoPlane.destroy();
+    g_legoPlane.destroy();
 	for(int i = 0 ; i < 4; i++) {
+		g_sphere[i].destroy();
 		g_legowall[i].destroy();
 	}
     destroyAllLegoBlock();
@@ -162,6 +171,8 @@ bool Display(float timeDelta)
 	{
 		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, 0x00afafaf, 1.0f, 0);
 		Device->BeginScene();
+
+		g_text.draw("fdsfds", 0, 0);
 
 		// check whether any two balls hit together and update the direction of balls
 		for(i = 0 ;i < 4; i++){

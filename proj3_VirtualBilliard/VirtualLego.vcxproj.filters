@@ -33,6 +33,9 @@
     <ClCompile Include="CLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CText.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="d3dUtility.h">
@@ -48,6 +51,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CText.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

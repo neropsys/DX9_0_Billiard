@@ -149,6 +149,7 @@
     <ClCompile Include="CLight.cpp" />
     <ClCompile Include="CObject.cpp" />
     <ClCompile Include="CSphere.cpp" />
+    <ClCompile Include="CText.cpp" />
     <ClCompile Include="CWall.cpp" />
     <ClCompile Include="d3dUtility.cpp" />
     <ClCompile Include="virtualLego.cpp" />
@@ -156,6 +157,7 @@
   <ItemGroup>
     <ClInclude Include="CLight.h" />
     <ClInclude Include="CSphere.h" />
+    <ClInclude Include="CText.h" />
     <ClInclude Include="CWall.h" />
     <ClInclude Include="d3dUtility.h" />
     <ClInclude Include="CObject.h" />
