@@ -97,6 +97,9 @@ bool Setup()
 		g_sphere[i].setCenter(spherePos[i][0], (float)M_RADIUS , spherePos[i][1]);
 		g_sphere[i].setPower(0,0);
 	}
+	//debugging
+	//g_sphere[2].setCenter(spherePos[3][0], (float)M_RADIUS, spherePos[3][1]);
+	//g_sphere[3].setCenter(spherePos[2][0], (float)M_RADIUS, spherePos[2][1]);
 	
 	// create blue ball for set direction
     if (false == g_target_blueball.create(Device, d3d::BLUE)) return false;
@@ -262,7 +265,7 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	static float rot_y = 0;
 	static int old_y = 0;
 	static enum { WORLD_MOVE, LIGHT_MOVE, BLOCK_MOVE } move = WORLD_MOVE;
-	static int order = 1;
+	static int order = 0;
 
 
 	switch (msg) {
@@ -289,7 +292,7 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case VK_SPACE:
-			if (!(g_sphere[0].isStop() && g_sphere[1].isStop() && g_sphere[2].isStop() && g_sphere[3].isStop())) break;
+			//if (!(g_sphere[0].isStop() && g_sphere[1].isStop() && g_sphere[2].isStop() && g_sphere[3].isStop())) break;
 			D3DXVECTOR3 playerpos[2] = { g_sphere[3].getCenter() , g_sphere[2].getCenter() }; //3 : white 2 : yellow
 			D3DXVECTOR3 redball[2] = { g_sphere[0].getCenter(), g_sphere[1].getCenter() };
 			D3DXVECTOR3 targetpos = g_target_blueball.getCenter();
@@ -299,16 +302,12 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			if (order == 0) myTurn = true;
 			else			myTurn = false;
 
-
-			int sign = 1;
-			if (order == 0) sign = 1;
-			else			sign = -1;
-
 			double theta = acos(sqrt(pow(targetpos.x - playerpos[order].x, 2)) / sqrt(pow(targetpos.x - playerpos[order].x, 2) +
 				pow(targetpos.z - playerpos[order].z, 2)));		// 기본 1 사분면
 			if (targetpos.z - playerpos[order].z <= 0 && targetpos.x - playerpos[order].x >= 0) { theta = -theta; }	//4 사분면
 			if (targetpos.z - playerpos[order].z >= 0 && targetpos.x - playerpos[order].x <= 0) { theta = PI - theta; } //2 사분면
-			if (targetpos.z - playerpos[order].z <= 0 && targetpos.x - playerpos[order].x <= 0) { theta = PI + theta; } // 3 사분면
+			//corrected bug that yellow ball heads opposite way at start
+			if (targetpos.z - playerpos[order].z < 0 && targetpos.x - playerpos[order].x < 0) { theta = PI + theta; } // 3 사분면
 			double distance = sqrt(pow(targetpos.x - playerpos[order].x, 2) + pow(targetpos.z - playerpos[order].z, 2));
 			if (order == 0)
 				g_sphere[3].setPower(distance * cos(theta), distance * sin(theta));
