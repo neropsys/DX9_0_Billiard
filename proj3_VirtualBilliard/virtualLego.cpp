@@ -262,7 +262,7 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	static float rot_y = 0;
 	static int old_y = 0;
 	static enum { WORLD_MOVE, LIGHT_MOVE, BLOCK_MOVE } move = WORLD_MOVE;
-	static int order = 1;
+	static int order = 0;
 
 
 	switch (msg) {
