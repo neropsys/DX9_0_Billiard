@@ -262,8 +262,6 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	static float rot_y = 0;
 	static int old_y = 0;
 	static enum { WORLD_MOVE, LIGHT_MOVE, BLOCK_MOVE } move = WORLD_MOVE;
-	static int order = 1;
-
 
 	switch (msg) {
 	case WM_DESTROY:
@@ -287,40 +285,23 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					(wire ? D3DFILL_WIREFRAME : D3DFILL_SOLID));
 			}
 			break;
-
-		case VK_SPACE:
-
-			D3DXVECTOR3 playerpos[2] = { g_sphere[3].getCenter() , g_sphere[2].getCenter() }; //3 : white 2 : yellow
-			D3DXVECTOR3 redball[2] = { g_sphere[0].getCenter(), g_sphere[1].getCenter() };
+		case VK_SPACE:{
 			D3DXVECTOR3 targetpos = g_target_blueball.getCenter();
-
-			bool myTurn = true; //white : true , yellow : false 
-
-			if (order == 0) myTurn = true;
-			else			myTurn = false;
-
-
-			int sign = 1;
-			if (order == 0) sign = 1;
-			else			sign = -1;
-
-			double theta = acos(sqrt(pow(targetpos.x - playerpos[order].x, 2)) / sqrt(pow(targetpos.x - playerpos[order].x, 2) +
-				pow(targetpos.z - playerpos[order].z, 2)));		// 기본 1 사분면
-			if (targetpos.z - playerpos[order].z <= 0 && targetpos.x - playerpos[order].x >= 0) { theta = -theta; }	//4 사분면
-			if (targetpos.z - playerpos[order].z >= 0 && targetpos.x - playerpos[order].x <= 0) { theta = PI - theta; } //2 사분면
-			if (targetpos.z - playerpos[order].z <= 0 && targetpos.x - playerpos[order].x <= 0) { theta = PI + theta; } // 3 사분면
-			double distance = sqrt(pow(targetpos.x - playerpos[order].x, 2) + pow(targetpos.z - playerpos[order].z, 2));
-			if (order == 0)
-				g_sphere[3].setPower(distance * cos(theta), distance * sin(theta));
-			else
-				g_sphere[2].setPower(distance * cos(theta), distance * sin(theta));
-
-			(order == 1) ? (order = 0) : (order = 1);
+			D3DXVECTOR3	whitepos = g_sphere[3].getCenter();
+			double theta = acos(sqrt(pow(targetpos.x - whitepos.x, 2)) / sqrt(pow(targetpos.x - whitepos.x, 2) +
+				pow(targetpos.z - whitepos.z, 2)));		// 기본 1 사분면
+			if (targetpos.z - whitepos.z <= 0 && targetpos.x - whitepos.x >= 0) { theta = -theta; }	//4 사분면
+			if (targetpos.z - whitepos.z >= 0 && targetpos.x - whitepos.x <= 0) { theta = PI - theta; } //2 사분면
+			if (targetpos.z - whitepos.z <= 0 && targetpos.x - whitepos.x <= 0){ theta = PI + theta; } // 3 사분면
+			double distance = sqrt(pow(targetpos.x - whitepos.x, 2) + pow(targetpos.z - whitepos.z, 2));
+			g_sphere[3].setPower(distance * cos(theta), distance * sin(theta));
+			break;
+		}
 
 			break;
 		}
-		break;
 	}
+
 	case WM_MOUSEMOVE:
 	{
 		int new_x = LOWORD(lParam);
