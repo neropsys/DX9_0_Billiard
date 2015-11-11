@@ -303,12 +303,15 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			else			myTurn = false;
 
 			double theta = acos(sqrt(pow(targetpos.x - playerpos[order].x, 2)) / sqrt(pow(targetpos.x - playerpos[order].x, 2) +
-				pow(targetpos.z - playerpos[order].z, 2)));		// 기본 1 사분면
-			if (targetpos.z - playerpos[order].z <= 0 && targetpos.x - playerpos[order].x >= 0) { theta = -theta; }	//4 사분면
-			if (targetpos.z - playerpos[order].z >= 0 && targetpos.x - playerpos[order].x <= 0) { theta = PI - theta; } //2 사분면
-			//corrected bug that yellow ball heads opposite way at start
-			if (targetpos.z - playerpos[order].z < 0 && targetpos.x - playerpos[order].x < 0) { theta = PI + theta; } // 3 사분면
+				pow(targetpos.z - playerpos[order].z, 2)));		// 기본 1 사분면 및 x축 오른쪽
+			if (targetpos.z - playerpos[order].z < 0 && targetpos.x - playerpos[order].x > 0) { theta = -theta; }	//4 사분면
+			else if (targetpos.z - playerpos[order].z >= 0 && targetpos.x - playerpos[order].x < 0) { theta = PI - theta; } //2 사분면 및 x축 왼쪽
+			else if (targetpos.z - playerpos[order].z < 0 && targetpos.x - playerpos[order].x < 0) { theta = PI + theta; } // 3 사분면
+			else if (targetpos.z - playerpos[order].z < 0 && targetpos.x - playerpos[order].x == 0) { theta = PI*(3/2); } // y축 위쪽
+			else if (targetpos.z - playerpos[order].z > 0 && targetpos.x - playerpos[order].x == 0) { theta = PI*(1/2); } // y축 아래쪽
+
 			double distance = sqrt(pow(targetpos.x - playerpos[order].x, 2) + pow(targetpos.z - playerpos[order].z, 2));
+
 			if (order == 0)
 				g_sphere[3].setPower(distance * cos(theta), distance * sin(theta));
 			else
