@@ -289,7 +289,7 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case VK_SPACE:
-
+			if (!(g_sphere[0].isStop() && g_sphere[1].isStop() && g_sphere[2].isStop() && g_sphere[3].isStop())) break;
 			D3DXVECTOR3 playerpos[2] = { g_sphere[3].getCenter() , g_sphere[2].getCenter() }; //3 : white 2 : yellow
 			D3DXVECTOR3 redball[2] = { g_sphere[0].getCenter(), g_sphere[1].getCenter() };
 			D3DXVECTOR3 targetpos = g_target_blueball.getCenter();
