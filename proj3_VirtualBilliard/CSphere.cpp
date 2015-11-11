@@ -165,14 +165,15 @@ void CSphere::hitBy(CSphere& ball){
 		this->setPower(this->getVelocity() - a1 + a2);
 		ball.setPower(ball.getVelocity() - a2 + a1);
 		
+		
+
 		//공을 떼어놓는다
 		if (this->getPower() > ball.getPower()){
-			this->moveCenter((2 * this->getRadius() - dest) * avec * 2);
+			this->moveCenter((2 * this->getRadius() - dest) * -1 * avec);
 		}
 		else{
-			ball.moveCenter((2 * this->getRadius() - dest) * avec * -2);
+			ball.moveCenter((2 * this->getRadius() - dest) * 1 * avec);
 		}
-		
 		
 		
 	}
@@ -207,7 +208,8 @@ void CSphere::setCenter(float x, float y, float z) {
 
 }
 void CSphere::moveCenter(D3DXVECTOR3 vel){
-	this->getCenter() + vel;
+	D3DXVECTOR3 temp = this->getCenter() + vel;
+	this->setCenter(temp.x, temp.y, temp.z);
 }
 void CSphere::setPosition(float x, float y, float z) {
 	D3DXMATRIX m;
