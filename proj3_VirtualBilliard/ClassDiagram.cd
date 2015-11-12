@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="CLight" Collapsed="true">
+    <Position X="7" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAIAAAEEEAAAAAgAIAAEAAAAAAAAAAAABAAAAABCQ=</HashCode>
+      <FileName>CLight.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CSphere" Collapsed="true">
+    <Position X="2.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CIAEAQAAAAAZACAAFAIEAEIaAQACCDAACAVABAAAAAA=</HashCode>
+      <FileName>CSphere.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CText" Collapsed="true">
+    <Position X="5.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABgAAAAAAAAAAAAAAAIAAEAAAAAAAIAAAgBAAAAAAAA=</HashCode>
+      <FileName>CText.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CWall" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIQEAAAAQAAABAAIAAEACAAAAQgCAAABAAAAAEAA=</HashCode>
+      <FileName>CWall.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CObject" Collapsed="true">
+    <Position X="1.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAARAAAEEQAAAACAIAAEAKQAAAAAAAAEBAAAAAAAA=</HashCode>
+      <FileName>CObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CCue" Collapsed="true">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAQAAAEEAACAAAAIAgEAKQAAACAAACABAAAAAAAA=</HashCode>
+      <FileName>CCue.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="d3d::BoundingBox" Collapsed="true">
+    <Position X="5.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAAAAAAAAACAAAAAAEABAAAAAAAA=</HashCode>
+      <FileName>d3dUtility.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="d3d::BoundingSphere" Collapsed="true">
+    <Position X="7" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>d3dUtility.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="d3d::Ray" Collapsed="true">
+    <Position X="5.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAA=</HashCode>
+      <FileName>d3dUtility.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="Malgun Gothic" Size="9" />
+</ClassDiagram>

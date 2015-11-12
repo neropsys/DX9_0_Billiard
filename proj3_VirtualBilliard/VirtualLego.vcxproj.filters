@@ -36,6 +36,9 @@
     <ClCompile Include="CText.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CCue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="d3dUtility.h">
@@ -56,6 +59,9 @@
     <ClInclude Include="CText.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CCue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="SphereVS.hlsl">
@@ -67,5 +73,8 @@
     <FxCompile Include="SphereEffect.fx">
       <Filter>Resource Files</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

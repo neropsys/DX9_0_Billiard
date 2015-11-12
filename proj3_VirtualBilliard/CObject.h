@@ -24,7 +24,7 @@ protected:
 	float m_x;
 	float m_y;
 	float m_z;
-	D3DMATERIAL9            m_mtrl;
+	D3DMATERIAL9            m_mtrl;//m_effect와 m_shaderCode, m_texture로 대체될 예정, 
 	D3DXMATRIX              m_mLocal;
 	LPD3DXMESH              m_pMesh;
 };
