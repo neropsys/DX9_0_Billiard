@@ -143,25 +143,21 @@ bool CSphere::hasIntersected(CSphere& ball)
 	//프레임 위치 이용한 계산.
 }
 
-//calculate absolute value of a given vector( = |u| )
-float abs_vector(float x, float y){
-	return sqrtf(pow(x, 2) + pow(y, 2));
-}
-
 void CSphere::hitBy(CSphere& ball){
 	if (hasIntersected(ball))
 	{
 		D3DXVECTOR3 avec, a1, a2;
 
-		float dest;	//각각 벡터 v1과 v2의 x, z성분
+		float dest;	//충돌 방향의 단위 벡터 연산
  		const D3DXVECTOR3 centVec = ball.getCenter() - this->getCenter();
 		dest = D3DXVec3Length(&centVec);
 		avec = (ball.getCenter() - this->getCenter()) / dest;
 
-		
+		//공 O1, O2의 속도 벡터 V1, V2의 충돌 방향 벡터 연산
 		a1 = (D3DXVec3Dot(&avec, &this->velocity) * avec);
 		a2 = (D3DXVec3Dot(&avec, &ball.velocity) * avec);
 
+		//V1*avec와 V2*avec를 교체
 		this->setPower(this->getVelocity() - a1 + a2);
 		ball.setPower(ball.getVelocity() - a2 + a1);
 		
