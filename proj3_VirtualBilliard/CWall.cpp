@@ -29,13 +29,7 @@ bool CWall::create(IDirect3DDevice9* pDevice,
 	return true;
 }
 
-void CWall::destroy(){
-	if (m_pMesh != NULL){
-		m_pMesh->Release();
-		m_pMesh = NULL;
-	}
-		
-}
+
 void CWall::draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld,
 	const D3DXMATRIX& mView){
 	if (NULL == pDevice)
@@ -93,14 +87,4 @@ void CWall::hitBy(CSphere& ball){
 		ball.setCenter(cord.x, cord.y, 3 - M_RADIUS);
 		ball.setPower(ball.getVelocity().x, ball.getVelocity().z*(-0.5)); // 방향 전환
 	}
-}
-
-void CWall::setPosition(float x, float y, float z)
-{
-	D3DXMATRIX m;
-	this->m_x = x;
-	this->m_z = z;
-
-	D3DXMatrixTranslation(&m, x, y, z);
-	setLocalTransform(m);
 }

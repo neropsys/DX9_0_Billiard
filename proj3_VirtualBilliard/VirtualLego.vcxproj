@@ -163,6 +163,8 @@
     <ClInclude Include="CWall.h" />
     <ClInclude Include="d3dUtility.h" />
     <ClInclude Include="CObject.h" />
+    <ClInclude Include="ConstVariable.h" />
+    <ClInclude Include="ICollidable.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="SphereEffect.fx">

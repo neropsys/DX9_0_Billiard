@@ -1,6 +1,6 @@
 #pragma once
+#include "CObject.h"
 #include <d3dx9.h>
-#define FILENAME "filename"
 
 /*
 Refactoring
@@ -67,38 +67,25 @@ new ICollidable class{
 
 */
 
-class CCue{
+class CCue : public CObject{
 public:
 	CCue();
 	~CCue();
-	bool create(IDirect3DDevice9* pDevice);
-	void setPosition(float x, float y, float z);
-	void draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld, const D3DXMATRIX& mView);
-	void destroy();
-	void inline setLocalTransform(const D3DXMATRIX& mLocal){ m_mLocal = mLocal; }
-	const inline D3DXMATRIX& getLocalTransform() const{ return m_mLocal; }
+	bool create(IDirect3DDevice9* pDevice, CObject::Shape shape);//will be moved to parent class
+	void draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld, const D3DXMATRIX& mView) override;
+	const inline D3DXMATRIX& getLocalTransform() const{ return m_mLocal; }//will be moved to parent class
+	const inline D3DXVECTOR3 getPosition()const{//will be moved to parent class
+		return D3DXVECTOR3(m_x, m_y, m_z);
+	}
+	void playHit();
 private:
-#define FVF_VERTEX D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX1
-	struct VERTEX
-	{
-		D3DXVECTOR3 pos;     // vertex position
-		D3DXVECTOR3 norm;    // vertex normal
-		float tu;            // texture coordinates
-		float tv;
-	};
 
-	//LPD3DXMESH createMesh(IDirect3DDevice9* pDevice);
-	//LPD3DXEFFECT LoadShader(IDirect3DDevice9* pDevice, const char* fileName);
-	//LPDIRECT3DTEXTURE9 LoadTexture(IDirect3DDevice9* pDevice, const char* fileName);
-//	LPD3DXMESH createMesh(IDirect3DDevice9* pDevice, float rad, UINT slices, UINT stacks);
+	LPD3DXMESH convertMesh(IDirect3DDevice9* pDevice, const LPD3DXMESH& input);//to be overrided
+	LPD3DXEFFECT LoadShader(IDirect3DDevice9* pDevice, const char* fileName);//will be moved to parent class
+	LPDIRECT3DTEXTURE9 LoadTexture(IDirect3DDevice9* pDevice, const char* fileName);//will be moved to parent class
 
-	float			m_x;
-	float			m_y;
-	float			m_z;
-	LPD3DXMESH		m_pMesh;
-	D3DXMATRIX		m_mLocal;
-	ID3DXEffect*	m_effect;
-	LPD3DXBUFFER	m_shaderCode;
-	LPDIRECT3DTEXTURE9		m_texture;
+
+
+
 
 };

@@ -6,8 +6,6 @@
 
 CSphere::CSphere() {
 
-	D3DXMatrixIdentity(&m_mLocal);
-	ZeroMemory(&m_mtrl, sizeof(m_mtrl));
 	m_radius = 0;
 	m_pMesh = NULL;
 
@@ -15,7 +13,9 @@ CSphere::CSphere() {
 	velocity.y = 0;
 	velocity.z = 0;
 }
+
 CSphere::~CSphere(){}
+
 bool CSphere::create(IDirect3DDevice9* pDevice, D3DXCOLOR color){
 	if (color == d3d::RED){
 		m_texture = LoadTexture(pDevice, SPHERE_RED);
@@ -40,27 +40,8 @@ bool CSphere::create(IDirect3DDevice9* pDevice, D3DXCOLOR color){
 
 	return true;
 }
-void CSphere::destroy() {
-
-	if (m_pMesh != NULL) {
-		m_pMesh->Release();
-		m_pMesh = NULL;
-	}
-	if (m_shaderCode != NULL){
-		m_shaderCode->Release();
-		m_shaderCode = NULL;
-	}
-	if (m_texture != NULL) {
-		m_texture->Release();
-		m_texture = NULL;
-	}
-	if (m_effect != NULL){
-		m_effect->Release();
-		m_effect = NULL;
-	}
 
 
-}
 void CSphere::tempdraw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld,
 	const D3DXMATRIX& mView,
 	const D3DXVECTOR4& mLightPos){
@@ -209,12 +190,6 @@ void CSphere::setCenter(float x, float y, float z) {
 void CSphere::moveCenter(D3DXVECTOR3 vel){
 	this->getCenter() + vel;
 }
-void CSphere::setPosition(float x, float y, float z) {
-	D3DXMATRIX m;
-	m_x = x;	m_y = y;	m_z = z;
-	D3DXMatrixTranslation(&m, x, y, z);
-	setLocalTransform(m);
-}
 
 LPD3DXEFFECT CSphere::LoadShader(IDirect3DDevice9* pDevice, const char* fileName){
 	LPD3DXBUFFER pError = NULL;
@@ -238,46 +213,6 @@ LPD3DXEFFECT CSphere::LoadShader(IDirect3DDevice9* pDevice, const char* fileName
 		}
 	}
 
-	/*
-	D3DXCompileShaderFromFile(
-		SPHERE_VS_NAME,
-		0,
-		0,
-		"main",
-		"vs_3_0",
-		dwShaderFlags,
-		&ret,
-		&pError,
-		&m_constTable);
-	if (!ret && pError){
-		int size = pError->GetBufferSize();
-		void* ack = pError->GetBufferPointer();
-		if (ack){
-			char* str = new char[size];
-			sprintf(str, (const char*)ack, size);
-			OutputDebugString(str);
-			delete[] str;
-			//d3d::Release<LPD3DXBUFFER>(pError);
-		}
-	}
-	if (FAILED(pDevice->CreateVertexShader((DWORD*)ret->GetBufferPointer(), &m_shader))){
-		OutputDebugString("Failed to create vertex shader");
-		return NULL;
-	}
-	
-	//D3DXCompileShaderFromFile(fileName, 0, 0, "main", "vs_3_0", dwShaderFlags, &m_effect, &pError, NULL);
-	D3DXCreateEffectFromFile(pDevice, fileName, NULL, NULL, dwShaderFlags, NULL, &ret, &pError);
-	if (!ret && pError){
-		int size = pError->GetBufferSize();
-		void* ack = pError->GetBufferPointer();
-		if (ack){
-			char* str = new char[size];
-			sprintf(str, (const char*)ack, size);
-			OutputDebugString(str);
-			delete[] str;
-		}
-	}*/
-
 	return ret;
 
 }
@@ -297,31 +232,10 @@ LPD3DXMESH CSphere::createMesh(IDirect3DDevice9* pDevice, float rad, UINT slices
 		return NULL;
 	}
 
-	D3DVERTEXELEMENT9 decl[] =
-	{
-		{ 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-		{ 0, sizeof(D3DXVECTOR3), D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
-		{ 0, sizeof(D3DXVECTOR3) * 2, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
-		D3DDECL_END()
-	};
-	//IDirect3DVertexDeclaration9* ppDecl;
-	//DWORD numFaces = mesh->GetNumFaces();
-	//DWORD numVertices = mesh->GetNumVertices();
-	//DWORD options = mesh->GetOptions();
-
 	LPD3DXMESH newMesh;
 	mesh->CloneMesh(D3DXMESH_SYSTEMMEM, decl, pDevice, &newMesh);
 
 
-	//if (FAILED(mesh->CloneMeshFVF(D3DXMESH_SYSTEMMEM, FVF_VERTEX, pDevice, &newMesh))){
-	//	return mesh;
-	//}
-	//if (FAILED(D3DXCreateMesh(numFaces, numVertices, options, decl, pDevice, &newMesh))){
-	//	return mesh;
-	//}
-	//if (FAILED(pDevice->CreateVertexDeclaration(decl, &ppDecl))){
-	//	return mesh;
-//	}
 	VERTEX* pVerts;
 	if (SUCCEEDED(newMesh->LockVertexBuffer(0, (LPVOID*)&pVerts))){
 		int numVerts = newMesh->GetNumVertices();
@@ -334,17 +248,6 @@ LPD3DXMESH CSphere::createMesh(IDirect3DDevice9* pDevice, float rad, UINT slices
 		}
 		newMesh->UnlockVertexBuffer();
 	}
-
-	/*
-	if (SUCCEEDED(newMesh->LockVertexBuffer(0, (LPVOID*)&pVerts))){
-		int numVerts = newMesh->GetNumVertices();
-		for (int i = 0; i < numVerts; i++){
-			pVerts->tu = asin(pVerts->norm.x) / D3DX_PI + .5f;
-			pVerts->tv = asin(pVerts->norm.y) / D3DX_PI + .5f;
-			pVerts++;
-		}
-		newMesh->UnlockVertexBuffer();
-	}*/
 	mesh->Release();
 	return newMesh;
 
