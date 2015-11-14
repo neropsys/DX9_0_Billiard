@@ -1,10 +1,13 @@
 #include "CText.h"
+#include <string>
 #include <windef.h>
+using namespace std;
 CText::CText(){}
 CText::~CText(){
 }
 
-bool CText::create(IDirect3DDevice9* pDevice, int screenWidth, int screenHeight){
+bool CText::create(IDirect3DDevice9* pDevice, int screenWidth, int screenHeight, string name){
+	this->name = name;
 	rct.left = 0;
 	rct.right = screenWidth;
 	rct.top = 0;
@@ -16,8 +19,12 @@ bool CText::create(IDirect3DDevice9* pDevice, int screenWidth, int screenHeight)
 	anchor = DT_LEFT | DT_TOP;
 	return true;
 }
-void CText::draw(LPCSTR pString){
-	ppFont->DrawTextA(0, pString, -1, &rct, anchor, fontColor);
+void CText::draw(){
+	ppFont->DrawTextA(0, name.c_str(), -1, &rct, anchor, fontColor);
+}
+void CText::setPosition(int x, int y){
+	rct.left = x;
+	rct.top = y;
 }
 void CText::destroy(){
 	if (ppFont != NULL){

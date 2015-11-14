@@ -62,6 +62,7 @@ const string player1Str = "Player1";
 const string player2Str = "Player2";
 CText g_player1;
 CText g_player2;
+CText g_turnIndicator;
 
 double g_camera_pos[3] = {0.0, 5.0, -8.0};
 
@@ -83,11 +84,12 @@ void destroyAllLegoBlock(void)
 bool Setup()
 {
 	int i;
-	
-	if (g_player1.create(Device, Width, Height) == false) return false;
-	if (g_player2.create(Device, Width, Height) == false) return false;
+	if (g_turnIndicator.create(Device, Width, Height, "Turn") == false) return false;
+	if (g_player1.create(Device, Width, Height, player1Str) == false) return false;
+	if (g_player2.create(Device, Width, Height, player2Str) == false) return false;
 	g_player1.setAnchor(DT_TOP | DT_LEFT);
 	g_player2.setAnchor(DT_TOP | DT_RIGHT);
+	g_turnIndicator.setAnchor(DT_TOP | DT_CENTER);
 
 
     D3DXMatrixIdentity(&g_mWorld);
@@ -183,9 +185,9 @@ bool Display(float timeDelta)
 		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, 0x00afafaf, 1.0f, 0);
 		Device->BeginScene();
 
-		g_player1.draw(player1Str.c_str());
-		g_player2.draw(player2Str.c_str());
-
+		g_player1.draw();
+		g_player2.draw();
+		g_turnIndicator.draw();
 		// check whether any two balls hit together and update the direction of balls
 		for(i = 0 ;i < 4; i++){
 			for(j = 0 ; j < 4; j++) {
