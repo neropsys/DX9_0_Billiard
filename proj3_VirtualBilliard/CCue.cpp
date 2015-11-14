@@ -1,6 +1,12 @@
 #include "CCue.h"
 #include "ConstVariable.h"
-CCue::CCue(){ D3DXMatrixIdentity(&m_mLocal); }
+CCue::CCue(){
+	D3DXMatrixIdentity(&m_mLocal);
+	animationInit = false;
+	moveDistance = 0.f;
+	pulled = false;
+	animationEnded = true;
+}
 CCue::~CCue(){}
 bool CCue::create(IDirect3DDevice9* pDevice){
 	if (CObject::create(pDevice, Shape::CYLINDER) == false) return false;
@@ -19,14 +25,16 @@ bool CCue::create(IDirect3DDevice9* pDevice){
 	m_pMesh = newMesh;
 	return true;
 }
-void CCue::draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld, const D3DXMATRIX& mView){
+void CCue::draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld, const D3DXMATRIX& mView, float time){
 	if (NULL == pDevice)
 		return;
 	//pDevice->SetTransform(D3DTS_WORLD, &mWorld);
 	//pDevice->MultiplyTransform(D3DTS_WORLD, &m_mLocal);
 	//m_pMesh->DrawSubset(0);
 	//return;
-
+	if (animationInit){
+		playAnimation(time);
+	}
 	pDevice->SetTransform(D3DTS_WORLD, &mWorld);
 	D3DXMATRIX proj;
 	pDevice->GetTransform(D3DTS_PROJECTION, &proj);
@@ -57,6 +65,33 @@ void CCue::draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld, const D3DXM
 
 }
 void CCue::playHit(){
+	animationInit = true;
+}
+bool CCue::IsAnimationEnded(){
+	return animationEnded;
+}
+void CCue::playAnimation(float time){
+	animationEnded = false;
+	D3DXVECTOR3 position =	this->getPosition();
+	time *= 50;
+	if (pulled == false){
+		moveDistance += time;
+		position.z += time;
+		if (moveDistance > CYLINDER_MOVEDISTANCE){
+			pulled = true;
+		}
+	}
+	else{
+		moveDistance -= time;
+		position.z -= time;
+		if (moveDistance < 0){
+			pulled = false;
+			animationEnded = true;
+			animationInit = false;
+			moveDistance = 0;
+		}
+	}
+	this->setPosition(position);
 
 }
 LPD3DXMESH CCue::convertMesh(IDirect3DDevice9* pDevice, LPD3DXMESH& mesh){

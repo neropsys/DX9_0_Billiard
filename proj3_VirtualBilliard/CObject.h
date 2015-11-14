@@ -7,9 +7,6 @@ public:
 	CObject();
 	virtual ~CObject();
 
-	virtual void draw(IDirect3DDevice9* pDevice,
-					   const D3DXMATRIX& mWorld,
-					   const D3DXMATRIX& mView) = 0;
 	void destroy();
 	void inline setLocalTransform(const D3DXMATRIX& mLocal) { m_mLocal = mLocal; }
 	void setPosition(float x, float y, float z);

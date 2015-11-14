@@ -89,7 +89,7 @@ bool Setup()
     if (false == g_legoPlane.create(Device, PLANE_WIDTH, PLANE_HEIGHT, PLANE_DEPTH, CWall::Plane)) return false;
     //g_legoPlane.setPosition(0.0f, -0.0006f / 5, 0.0f);
 	
-	if (g_cue.create(Device) == false) return false;
+
 	if (g_text.create(Device, Width, Height) == false) return false;
 
 	// create walls and set the position. note that there are four walls
@@ -113,6 +113,11 @@ bool Setup()
     if (false == g_target_blueball.create(Device, d3d::BLUE)) return false;
 	g_target_blueball.setCenter(.0f, (float)M_RADIUS , .0f);
 	
+
+
+	if (g_cue.create(Device) == false) return false;
+	g_cue.setPosition(g_sphere[3].getCenter());
+
 	// light setting 
     D3DLIGHT9 lit;
     ::ZeroMemory(&lit, sizeof(lit));
@@ -181,8 +186,9 @@ bool Display(float timeDelta)
 		g_text.draw("fdsfds", 0, 0);
 
 
-		g_cue.draw(Device, g_mWorld, g_mView);
-		g_cue.setPosition(g_target_blueball.getCenter());
+		g_cue.draw(Device, g_mWorld, g_mView, timeDelta);
+
+		//
 
 
 
@@ -262,7 +268,7 @@ bool Display(float timeDelta)
 			g_legowall[i].draw(Device, g_mWorld, g_mView);
 			g_sphere[i].tempdraw(Device, g_mWorld, g_mView, g_light.getPosition4());//  draw(Device, g_mWorld, g_mView);
 		}
-		g_target_blueball.draw(Device, g_mWorld, g_mView);
+		g_target_blueball.tempdraw(Device, g_mWorld, g_mView, g_light.getPosition4());
 
         g_light.draw(Device);
 		Device->EndScene();
@@ -285,7 +291,6 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	static float rot_y = 0;
 	static int old_y = 0;
 	static enum { WORLD_MOVE, LIGHT_MOVE, BLOCK_MOVE } move = WORLD_MOVE;
-
 	switch (msg) {
 	case WM_DESTROY:
 	{
@@ -317,8 +322,13 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			if (targetpos.z - whitepos.z >= 0 && targetpos.x - whitepos.x <= 0) { theta = PI - theta; } //2 사분면
 			if (targetpos.z - whitepos.z <= 0 && targetpos.x - whitepos.x <= 0){ theta = PI + theta; } // 3 사분면
 			double distance = sqrt(pow(targetpos.x - whitepos.x, 2) + pow(targetpos.z - whitepos.z, 2));
+
+			g_cue.playHit();
+
 			g_sphere[3].setPower(distance * cos(theta), distance * sin(theta));
+
 			break;
+
 		}
 
 			break;

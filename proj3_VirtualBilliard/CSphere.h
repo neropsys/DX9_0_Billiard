@@ -10,8 +10,6 @@ public:
 
 	bool create(IDirect3DDevice9* pDevice, D3DCOLOR);
 
-	void draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld,
-		const D3DXMATRIX& mView) override;
 	void tempdraw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld,
 		const D3DXMATRIX& mView,
 		const D3DXVECTOR4& mLightPos);

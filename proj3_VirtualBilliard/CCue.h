@@ -72,14 +72,19 @@ public:
 	CCue();
 	~CCue();
 	bool create(IDirect3DDevice9* pDevice);//will be moved to parent class
-	void draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld, const D3DXMATRIX& mView) override;
+	void draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld, const D3DXMATRIX& mView, float time);
 	const inline D3DXMATRIX& getLocalTransform() const{ return m_mLocal; }//will be moved to parent class
 	const inline D3DXVECTOR3 getPosition()const{//will be moved to parent class
 		return D3DXVECTOR3(m_x, m_y, m_z);
 	}
 	void playHit();
+	bool IsAnimationEnded();
 private:
-
+	void playAnimation(float time);
+	bool animationInit;
+	float moveDistance;
+	bool pulled;
+	bool animationEnded;
 	LPD3DXMESH convertMesh(IDirect3DDevice9* pDevice, LPD3DXMESH& mesh) override;
 	//to be overrided
 

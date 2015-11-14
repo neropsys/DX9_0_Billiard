@@ -83,43 +83,6 @@ void CSphere::tempdraw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld,
 	m_effect->End();
 
 }
-void CSphere::draw(IDirect3DDevice9* pDevice,
-	const D3DXMATRIX& mWorld,
-	const D3DXMATRIX& mView)
-{
-	if (NULL == pDevice)
-		return;
-
-	pDevice->SetTransform(D3DTS_WORLD, &mWorld);
-	D3DXMATRIX proj;
-	pDevice->GetTransform(D3DTS_PROJECTION, &proj);
-	pDevice->MultiplyTransform(D3DTS_WORLD, &m_mLocal);
-	m_effect->SetMatrix("gLocalMatrix", &m_mLocal);
-	m_effect->SetMatrix("gWorldMatrix", &mWorld);
-	m_effect->SetMatrix("gViewMatrix", &mView);
-	m_effect->SetMatrix("gProjectionMatrix", &proj);
-	m_effect->SetTexture("DiffuseMap", m_texture);
-	//m_effect->
-
-	pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	pDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
-	pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	m_effect->SetTechnique("ColorShader");
-	UINT numPass = 0;
-	m_effect->Begin(&numPass, NULL);
-	{
-
-		for (UINT i = 0; i < numPass; ++i)
-		{
-			m_effect->BeginPass(i);
-			m_pMesh->DrawSubset(0);
-			m_effect->EndPass();
-		}
-	}
-	m_effect->End();
-
-
-}
 
 
 

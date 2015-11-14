@@ -17,7 +17,7 @@ public:
 				Type type);
 
 	void draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld,
-		const D3DXMATRIX& mView) override;
+		const D3DXMATRIX& mView);
 
 	bool hasIntersected(CSphere& ball) override;
 	void hitBy(CSphere& ball) override;
