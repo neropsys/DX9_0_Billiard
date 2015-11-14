@@ -45,7 +45,7 @@ bool d3d::InitD3D(
 	HWND hwnd = 0;
     hwnd = ::CreateWindow("Direct3D9App",
         "Virtual Billiard", 
-		WS_EX_TOPMOST,
+		WS_POPUP,
 		0, 0, width, height,
 		0 /*parent hwnd*/, 0 /* menu */, hInstance, 0 /*extra*/); 
 
@@ -54,10 +54,16 @@ bool d3d::InitD3D(
 		::MessageBox(0, "CreateWindow() - FAILED", 0, 0);
 		return false;
 	}
+	int xPos = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
+	int yPos = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
+	SetWindowPos(hwnd, 0, xPos, yPos, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 
 	::ShowWindow(hwnd, SW_SHOW);
 	::UpdateWindow(hwnd);
-
+	RECT rc;
+	GetClientRect(hwnd, &rc);
+	UINT w = rc.right - rc.left;
+	UINT h = rc.bottom - rc.top;
 	//
 	// Init D3D: 
 	//
@@ -88,10 +94,6 @@ bool d3d::InitD3D(
 
 	// Step 3: Fill out the D3DPRESENT_PARAMETERS structure.
  
-    RECT rc;
-    GetClientRect(hwnd, &rc);
-    UINT w = rc.right - rc.left;
-    UINT h = rc.bottom - rc.top;
 	D3DPRESENT_PARAMETERS d3dpp;
 	d3dpp.BackBufferWidth            = w;
 	d3dpp.BackBufferHeight           = h;

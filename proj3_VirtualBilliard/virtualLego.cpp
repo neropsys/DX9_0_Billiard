@@ -14,12 +14,14 @@
 #include "CSphere.h"
 #include "CWall.h"
 #include "CLight.h"
+#include "CText.h"
 #include <vector>
 #include <ctime>
 #include <cstdlib>
 #include <cstdio>
 #include <cassert>
-
+#include <string>
+using namespace std;
 IDirect3DDevice9* Device = NULL;
 
 // window size
@@ -31,7 +33,6 @@ const int Height = 768;
 const float spherePos[4][2] = { {-2.7f,0} , {+2.4f,0} , {3.3f,0} , {-2.7f,-0.9f}}; 
 // initialize the color of each ball (ball0 ~ ball3)
 const D3DXCOLOR sphereColor[4] = {d3d::RED, d3d::RED, d3d::YELLOW, d3d::WHITE};
-
 // -----------------------------------------------------------------------------
 // Transform matrices
 // -----------------------------------------------------------------------------
@@ -57,6 +58,11 @@ CSphere g_yellowSphere;*/
 CSphere	g_target_blueball;
 CLight	g_light;
 
+const string player1Str = "Player1";
+const string player2Str = "Player2";
+CText g_player1;
+CText g_player2;
+
 double g_camera_pos[3] = {0.0, 5.0, -8.0};
 
 // -----------------------------------------------------------------------------
@@ -66,6 +72,11 @@ double g_camera_pos[3] = {0.0, 5.0, -8.0};
 
 void destroyAllLegoBlock(void)
 {
+	for (int i = 0; i < 4l; i++){
+		g_sphere[i].destroy();
+	}
+	g_player1.destroy();
+	g_player2.destroy();
 }
 
 // initialization
@@ -73,6 +84,12 @@ bool Setup()
 {
 	int i;
 	
+	if (g_player1.create(Device, Width, Height) == false) return false;
+	if (g_player2.create(Device, Width, Height) == false) return false;
+	g_player1.setAnchor(DT_TOP | DT_LEFT);
+	g_player2.setAnchor(DT_TOP | DT_RIGHT);
+
+
     D3DXMatrixIdentity(&g_mWorld);
     D3DXMatrixIdentity(&g_mView);
     D3DXMatrixIdentity(&g_mProj);
@@ -165,6 +182,9 @@ bool Display(float timeDelta)
 	{
 		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, 0x00afafaf, 1.0f, 0);
 		Device->BeginScene();
+
+		g_player1.draw(player1Str.c_str());
+		g_player2.draw(player2Str.c_str());
 
 		// check whether any two balls hit together and update the direction of balls
 		for(i = 0 ;i < 4; i++){
