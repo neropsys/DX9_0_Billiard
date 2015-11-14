@@ -68,6 +68,9 @@
     <ClInclude Include="ConstVariable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IVisible.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="SphereVS.hlsl">

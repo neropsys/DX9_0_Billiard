@@ -165,6 +165,7 @@
     <ClInclude Include="CObject.h" />
     <ClInclude Include="ConstVariable.h" />
     <ClInclude Include="ICollidable.h" />
+    <ClInclude Include="IVisible.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="SphereEffect.fx">

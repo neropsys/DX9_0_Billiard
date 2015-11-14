@@ -5,7 +5,8 @@ CCue::CCue(){
 	animationInit = false;
 	moveDistance = 0.f;
 	pulled = false;
-	animationEnded = true;
+	playing = false;
+	isVisible = true;
 }
 CCue::~CCue(){}
 bool CCue::create(IDirect3DDevice9* pDevice){
@@ -32,13 +33,16 @@ void CCue::draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld, const D3DXM
 	//pDevice->MultiplyTransform(D3DTS_WORLD, &m_mLocal);
 	//m_pMesh->DrawSubset(0);
 	//return;
+	if (!isVisible) return;
 	if (animationInit){
 		playAnimation(time);
 	}
 	pDevice->SetTransform(D3DTS_WORLD, &mWorld);
 	D3DXMATRIX proj;
 	pDevice->GetTransform(D3DTS_PROJECTION, &proj);
+
 	pDevice->MultiplyTransform(D3DTS_WORLD, &m_mLocal);
+	
 	m_effect->SetMatrix("gLocalMatrix", &m_mLocal);
 	m_effect->SetMatrix("gWorldMatrix", &mWorld);
 	m_effect->SetMatrix("gViewMatrix", &mView);
@@ -66,32 +70,45 @@ void CCue::draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld, const D3DXM
 }
 void CCue::playHit(){
 	animationInit = true;
-}
-bool CCue::IsAnimationEnded(){
-	return animationEnded;
+	playing = true;
 }
 void CCue::playAnimation(float time){
-	animationEnded = false;
 	D3DXVECTOR3 position =	this->getPosition();
-	time *= 50;
+	D3DXVECTOR3 rotation = this->getRotation();
+	time *= 20;
 	if (pulled == false){
 		moveDistance += time;
-		position.z += time;
+		position.z += time * cos(rotation.y);
+		position.x += time * sin(rotation.y);
 		if (moveDistance > CYLINDER_MOVEDISTANCE){
 			pulled = true;
 		}
 	}
 	else{
 		moveDistance -= time;
-		position.z -= time;
+		position.z -= time * cos(rotation.y);
+		position.x -= time * sin(rotation.y);
 		if (moveDistance < 0){
 			pulled = false;
-			animationEnded = true;
 			animationInit = false;
 			moveDistance = 0;
+			HitCallback();
+			playing = false;
 		}
 	}
 	this->setPosition(position);
+
+}
+void CCue::setRotationRelative(const D3DXVECTOR3& position){
+	D3DXVECTOR3 thisPosition = this->getPosition();
+	D3DXVECTOR3 relative = position;
+//	D3DXVec3Normalize(&thisPosition, &thisPosition);
+//	D3DXVec3Normalize(&relative, &relative);
+	float dot = D3DXVec3Dot(&thisPosition, &relative);
+	float cross = thisPosition.x * relative.y - thisPosition.y * relative.x;
+	float angle = (atan2(cross, dot) * 180 / PI) + 180;
+	//this->setRotation(0, 90, 0);
+	this->setRotation(0,-angle, 0);
 
 }
 LPD3DXMESH CCue::convertMesh(IDirect3DDevice9* pDevice, LPD3DXMESH& mesh){

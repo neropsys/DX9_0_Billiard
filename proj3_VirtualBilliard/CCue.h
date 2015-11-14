@@ -1,7 +1,7 @@
 #pragma once
 #include "CObject.h"
-#include <d3dx9.h>
-
+#include <d3dx9.h> 
+#include <functional>
 /*
 Refactoring
 새 클래스를 만들 예정.
@@ -77,14 +77,18 @@ public:
 	const inline D3DXVECTOR3 getPosition()const{//will be moved to parent class
 		return D3DXVECTOR3(m_x, m_y, m_z);
 	}
+	inline void setVisible(bool visible){ isVisible = visible; };
+	void setRotationRelative(const D3DXVECTOR3& position);
+	const inline bool isPlaying(){ return playing; };
+	std::function<void()>HitCallback;
 	void playHit();
-	bool IsAnimationEnded();
 private:
+	bool playing;
+	bool isVisible;
 	void playAnimation(float time);
 	bool animationInit;
 	float moveDistance;
 	bool pulled;
-	bool animationEnded;
 	LPD3DXMESH convertMesh(IDirect3DDevice9* pDevice, LPD3DXMESH& mesh) override;
 	//to be overrided
 

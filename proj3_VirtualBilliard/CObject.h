@@ -12,6 +12,9 @@ public:
 	void setPosition(float x, float y, float z);
 	void setPosition(const D3DXVECTOR3& position);
 	const inline D3DXMATRIX&  getLocalTransform(void) const { return m_mLocal; }
+	void setRotation(float x, float y, float z);
+	const inline D3DXVECTOR3 getRotation(){ return D3DXVECTOR3(m_rotx, m_roty, m_rotz); }
+	void setRotation(const D3DXVECTOR3&);
 
 
 protected:
@@ -44,6 +47,10 @@ protected:
 	float m_y;
 	float m_z;
 	//m_effect와 m_shaderCode, m_texture로 대체될 예정, 
+
+	float m_rotx;
+	float m_roty;
+	float m_rotz;
 
 	LPD3DXEFFECT			m_effect;
 	D3DXMATRIX              m_mLocal;

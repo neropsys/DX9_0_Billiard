@@ -117,7 +117,18 @@ bool Setup()
 
 	if (g_cue.create(Device) == false) return false;
 	g_cue.setPosition(g_sphere[3].getCenter());
-
+	g_cue.HitCallback = [=](){
+		g_cue.setVisible(false);
+		D3DXVECTOR3 targetpos = g_target_blueball.getCenter();
+		D3DXVECTOR3	whitepos = g_sphere[3].getCenter();
+		double theta = acos(sqrt(pow(targetpos.x - whitepos.x, 2)) / sqrt(pow(targetpos.x - whitepos.x, 2) +
+			pow(targetpos.z - whitepos.z, 2)));		// 기본 1 사분면
+		if (targetpos.z - whitepos.z <= 0 && targetpos.x - whitepos.x >= 0) { theta = -theta; }	//4 사분면
+		if (targetpos.z - whitepos.z >= 0 && targetpos.x - whitepos.x <= 0) { theta = PI - theta; } //2 사분면
+		if (targetpos.z - whitepos.z <= 0 && targetpos.x - whitepos.x <= 0){ theta = PI + theta; } // 3 사분면
+		double distance = sqrt(pow(targetpos.x - whitepos.x, 2) + pow(targetpos.z - whitepos.z, 2));
+		g_sphere[3].setPower(distance * cos(theta), distance * sin(theta));
+	};
 	// light setting 
     D3DLIGHT9 lit;
     ::ZeroMemory(&lit, sizeof(lit));
@@ -185,8 +196,14 @@ bool Display(float timeDelta)
 
 		g_text.draw("fdsfds", 0, 0);
 
+		if (CSphere::IsAllStop(g_sphere[0], g_sphere[1], g_sphere[2], g_sphere[3]) && !g_cue.isPlaying()){
+			g_cue.setPosition(g_sphere[3].getCenter());
+			g_cue.setVisible(true);
+			g_cue.setRotationRelative(g_target_blueball.getCenter());
 
-		g_cue.draw(Device, g_mWorld, g_mView, timeDelta);
+		}
+		if (CSphere::IsAllStop(g_sphere[0], g_sphere[1], g_sphere[2], g_sphere[3]))
+			g_target_blueball.tempdraw(Device, g_mWorld, g_mView, g_light.getPosition4());
 
 		//
 
@@ -262,13 +279,27 @@ bool Display(float timeDelta)
 		Device->SetTexture(0, 0);
 		*/
 
+
+		/*if (g_cue.IsAnimationEnded()){
+			D3DXVECTOR3 targetpos = g_target_blueball.getCenter();
+			D3DXVECTOR3	whitepos = g_sphere[3].getCenter();
+			double theta = acos(sqrt(pow(targetpos.x - whitepos.x, 2)) / sqrt(pow(targetpos.x - whitepos.x, 2) +
+				pow(targetpos.z - whitepos.z, 2)));		// 기본 1 사분면
+			if (targetpos.z - whitepos.z <= 0 && targetpos.x - whitepos.x >= 0) { theta = -theta; }	//4 사분면
+			if (targetpos.z - whitepos.z >= 0 && targetpos.x - whitepos.x <= 0) { theta = PI - theta; } //2 사분면
+			if (targetpos.z - whitepos.z <= 0 && targetpos.x - whitepos.x <= 0){ theta = PI + theta; } // 3 사분면
+			double distance = sqrt(pow(targetpos.x - whitepos.x, 2) + pow(targetpos.z - whitepos.z, 2));
+			g_sphere[3].setPower(distance * cos(theta), distance * sin(theta));
+		}*/
+
+		g_cue.draw(Device, g_mWorld, g_mView, timeDelta);
+
 		// draw plane, walls, and spheres
 		g_legoPlane.draw(Device, g_mWorld, g_mView);
 		for (i=0;i<4;i++) 	{
 			g_legowall[i].draw(Device, g_mWorld, g_mView);
 			g_sphere[i].tempdraw(Device, g_mWorld, g_mView, g_light.getPosition4());//  draw(Device, g_mWorld, g_mView);
 		}
-		g_target_blueball.tempdraw(Device, g_mWorld, g_mView, g_light.getPosition4());
 
         g_light.draw(Device);
 		Device->EndScene();
@@ -314,19 +345,7 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			}
 			break;
 		case VK_SPACE:{
-			D3DXVECTOR3 targetpos = g_target_blueball.getCenter();
-			D3DXVECTOR3	whitepos = g_sphere[3].getCenter();
-			double theta = acos(sqrt(pow(targetpos.x - whitepos.x, 2)) / sqrt(pow(targetpos.x - whitepos.x, 2) +
-				pow(targetpos.z - whitepos.z, 2)));		// 기본 1 사분면
-			if (targetpos.z - whitepos.z <= 0 && targetpos.x - whitepos.x >= 0) { theta = -theta; }	//4 사분면
-			if (targetpos.z - whitepos.z >= 0 && targetpos.x - whitepos.x <= 0) { theta = PI - theta; } //2 사분면
-			if (targetpos.z - whitepos.z <= 0 && targetpos.x - whitepos.x <= 0){ theta = PI + theta; } // 3 사분면
-			double distance = sqrt(pow(targetpos.x - whitepos.x, 2) + pow(targetpos.z - whitepos.z, 2));
-
 			g_cue.playHit();
-
-			g_sphere[3].setPower(distance * cos(theta), distance * sin(theta));
-
 			break;
 
 		}
@@ -343,7 +362,8 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		float dy;
 
 		if (LOWORD(wParam) & MK_LBUTTON) {
-
+			if (g_cue.isPlaying())
+				break;
 			if (isReset) {
 				isReset = false;
 			}
@@ -378,6 +398,8 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					new_x = 0;
 				if (new_y <= 0)
 					new_y = 0;
+				if (g_cue.isPlaying())
+					break;
 				dx = (old_x - new_x);// * 0.01f;
 				dy = (old_y - new_y);// * 0.01f;
 

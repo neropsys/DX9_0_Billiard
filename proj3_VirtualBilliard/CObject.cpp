@@ -24,6 +24,17 @@ bool CObject::create(IDirect3DDevice9* pDevice, CObject::Shape shape){//Only cre
 
 	return true;
 }
+void CObject::setRotation(float x, float y, float z){
+	D3DXMATRIX m;
+	m_rotx = x;
+	m_roty = y;
+	m_rotz = z;
+	D3DXMatrixRotationYawPitchRoll(&m, D3DXToRadian(y), D3DXToRadian(x), D3DXToRadian(z));
+	D3DXMatrixMultiply(&m_mLocal, &m, &m_mLocal);
+}
+void CObject::setRotation(const D3DXVECTOR3& rot){
+	setRotation(rot.x, rot.y, rot.z);
+}
 void CObject::setPosition(float x, float y, float z){
 
 	D3DXMATRIX m;
