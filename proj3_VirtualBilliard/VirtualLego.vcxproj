@@ -146,6 +146,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CCue.cpp" />
     <ClCompile Include="CLight.cpp" />
     <ClCompile Include="CObject.cpp" />
     <ClCompile Include="CSphere.cpp" />
@@ -155,12 +156,16 @@
     <ClCompile Include="virtualLego.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CCue.h" />
     <ClInclude Include="CLight.h" />
     <ClInclude Include="CSphere.h" />
     <ClInclude Include="CText.h" />
     <ClInclude Include="CWall.h" />
     <ClInclude Include="d3dUtility.h" />
     <ClInclude Include="CObject.h" />
+    <ClInclude Include="ConstVariable.h" />
+    <ClInclude Include="ICollidable.h" />
+    <ClInclude Include="IVisible.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="SphereEffect.fx">
@@ -182,6 +187,9 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">main</EntryPointName>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">3.0</ShaderModel>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

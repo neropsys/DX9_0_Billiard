@@ -1,36 +1,34 @@
 #pragma once
 #include "CObject.h"
+#include "ICollidable.h"
 #include "d3dUtility.h"
-class CWall : public CObject{
+class CWall : public CObject, ICollidable{
 public:
 	CWall();
 	~CWall();
-
+	enum Type{
+		Edge,
+		Plane
+	};
 	bool create(IDirect3DDevice9* pDevice,
-				float ix,
-				float iz,
 				float iwidth,
 				float iheight,
 				float idepth,
-				D3DXCOLOR color = d3d::WHITE);
-	void destroy() override;
+				Type type);
 
 	void draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld,
-		const D3DXMATRIX& mView) override;
+		const D3DXMATRIX& mView);
 
 	bool hasIntersected(CSphere& ball) override;
 	void hitBy(CSphere& ball) override;
-
-	void setPosition(float x, float y, float z) override;
 	const D3DXVECTOR3 inline getPosition(){ return D3DXVECTOR3(m_x, m_y, m_z); }
 	inline float getHeight() const { return M_HEIGHT; }
 
 private:
 	using CObject::setLocalTransform;
-
 	float                   m_width;
 	float                   m_depth;
 	float					m_height;
-
+	LPD3DXMESH convertMesh(IDirect3DDevice9* pDevice, LPD3DXMESH& input) override;
 
 };

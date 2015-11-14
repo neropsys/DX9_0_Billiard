@@ -1,10 +1,9 @@
 #include "CWall.h"
 #include "CSphere.h"
 #include <d3dx9math.h>
-
+#include "ConstVariable.h"
 CWall::CWall(){
 	D3DXMatrixIdentity(&m_mLocal);
-	ZeroMemory(&m_mtrl, sizeof(m_mtrl));
 	m_width = 0;
 	m_depth = 0;
 	m_pMesh = NULL;
@@ -12,38 +11,79 @@ CWall::CWall(){
 CWall::~CWall(){}
 
 bool CWall::create(IDirect3DDevice9* pDevice,
-	float ix,
-	float iz,
 	float iwidth,
 	float iheight,
 	float idepth,
-	D3DXCOLOR color){
-	if (!CObject::create(pDevice, color))
-		return false;
-
+	Type type){
 	m_width = iwidth;
 	m_depth = idepth;
-	
-	if (FAILED(D3DXCreateBox(pDevice, iwidth, iheight, idepth, &m_pMesh, NULL)))
+	m_height = iheight;
+	if (FAILED(D3DXCreateBox(pDevice, iwidth, iheight, idepth, &m_pMesh, 0))) return false;
+
+	LPD3DXMESH newMesh = convertMesh(pDevice, m_pMesh);
+	if (newMesh == nullptr){
+		m_pMesh->Release();
 		return false;
+	}
+	switch (type){
+	case Plane:
+		textureFile = PLANE_TEXTURE;
+		effectFile = PLANE_EFFECT;
+		break;
+	case Edge:
+		effectFile = EDGE_EFFECT;
+		textureFile = EDGE_TEXTURE;
+		break;
+	}
+	m_texture = LoadTexture(pDevice, textureFile);
+	m_effect = LoadShader(pDevice, effectFile);
+
+
+	if (m_texture == nullptr || m_effect == nullptr)
+		return false;
+	m_pMesh->Release();
+	m_pMesh = newMesh;
+
 	return true;
 }
 
-void CWall::destroy(){
-	if (m_pMesh != NULL){
-		m_pMesh->Release();
-		m_pMesh = NULL;
-	}
-		
-}
 void CWall::draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld,
 	const D3DXMATRIX& mView){
 	if (NULL == pDevice)
 		return;
+	//pDevice->SetTransform(D3DTS_WORLD, &mWorld);
+	//pDevice->MultiplyTransform(D3DTS_WORLD, &m_mLocal);
+	//m_pMesh->DrawSubset(0);
+	//return;
+
 	pDevice->SetTransform(D3DTS_WORLD, &mWorld);
+	D3DXMATRIX proj;
+	pDevice->GetTransform(D3DTS_PROJECTION, &proj);
 	pDevice->MultiplyTransform(D3DTS_WORLD, &m_mLocal);
-	pDevice->SetMaterial(&m_mtrl);
-	m_pMesh->DrawSubset(0);
+	m_effect->SetMatrix("gLocalMatrix", &m_mLocal);
+	m_effect->SetMatrix("gWorldMatrix", &mWorld);
+	m_effect->SetMatrix("gViewMatrix", &mView);
+	//m_effect->SetVector("gWorldLightPosition", &mLightPos);
+	m_effect->SetMatrix("gProjectionMatrix", &proj);
+	m_effect->SetTexture("DiffuseMap", m_texture);
+	//m_effect->
+
+	pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	pDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
+	pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	m_effect->SetTechnique("ColorShader");
+	UINT numPass = 0;
+	m_effect->Begin(&numPass, NULL);
+	{
+		for (UINT i = 0; i < numPass; ++i)
+		{
+			m_effect->BeginPass(i);
+			m_pMesh->DrawSubset(0);
+			m_effect->EndPass();
+		}
+	}
+	m_effect->End();
+
 }
 //Determines whether the ball has intersected the wall
 bool CWall::hasIntersected(CSphere& ball){
@@ -95,12 +135,36 @@ void CWall::hitBy(CSphere& ball){
 	}
 }
 
-void CWall::setPosition(float x, float y, float z)
-{
-	D3DXMATRIX m;
-	this->m_x = x;
-	this->m_z = z;
+LPD3DXMESH CWall::convertMesh(IDirect3DDevice9* pDevice, LPD3DXMESH& mesh){
 
-	D3DXMatrixTranslation(&m, x, y, z);
-	setLocalTransform(m);
+	D3DVERTEXELEMENT9 decl[] =
+	{
+		{ 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, sizeof(D3DXVECTOR3), D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
+		{ 0, sizeof(D3DXVECTOR3) * 2, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+		D3DDECL_END()//will be declared on 
+	};
+
+	LPD3DXMESH newMesh = nullptr;
+	VERTEX* pVerts;
+	HRESULT result = mesh->CloneMesh(D3DXMESH_SYSTEMMEM, decl, pDevice, &newMesh);
+
+	if (FAILED(result)) return nullptr;
+
+	if (SUCCEEDED(newMesh->LockVertexBuffer(0, (LPVOID*)&pVerts))){
+		int numVerts = newMesh->GetNumVertices();
+		for (int i = 0; i < numVerts; i++){
+			D3DXVECTOR3 v = pVerts->pos - getPosition();
+			D3DXVec3Normalize(&v, &v);
+			pVerts->tu = asin(v.x) / D3DX_PI + .5f;
+			pVerts->tv = asin(v.y) / D3DX_PI + .5f;
+			pVerts++;
+		}
+		newMesh->UnlockVertexBuffer();
+		//temporary uv generator
+		return newMesh;
+	}
+	else{
+		return nullptr;
+	}
 }

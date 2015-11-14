@@ -36,6 +36,12 @@
     <ClCompile Include="CText.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+<<<<<<< HEAD
+=======
+    <ClCompile Include="CCue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+>>>>>>> neropsys_TextClass
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="d3dUtility.h">
@@ -56,6 +62,21 @@
     <ClInclude Include="CText.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+<<<<<<< HEAD
+=======
+    <ClInclude Include="CCue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ICollidable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstVariable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IVisible.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+>>>>>>> neropsys_TextClass
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="SphereVS.hlsl">
@@ -67,5 +88,8 @@
     <FxCompile Include="SphereEffect.fx">
       <Filter>Resource Files</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
 </Project>
