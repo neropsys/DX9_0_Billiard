@@ -11,26 +11,28 @@ CLight::CLight(){
 }
 CLight::~CLight(){}
 
-bool CLight::create(IDirect3DDevice9* pDevice, const D3DLIGHT9& lit, float radius){
+bool CLight::create(IDirect3DDevice9* pDevice){
 	if (NULL == pDevice)
 		return false;
-	if (FAILED(D3DXCreateSphere(pDevice, radius, 10, 10, &m_pMesh, NULL)))
+	if (FAILED(D3DXCreateSphere(pDevice, 0.1f , 10, 10, &m_pMesh, NULL)))
 		return false;
+	D3DLIGHT9 lit;
+	::ZeroMemory(&lit, sizeof(lit));
 
-	m_bound._center = lit.Position;
-	m_bound._radius = radius;
+	m_bound._center = D3DXVECTOR3(0.0f, 3.0f, 0.0f);
+	m_bound._radius = 0.1f;
 
-	m_lit.Type = lit.Type;
-	m_lit.Diffuse = lit.Diffuse;
-	m_lit.Specular = lit.Specular;
-	m_lit.Ambient = lit.Ambient;
-	m_lit.Position = lit.Position;
+	m_lit.Type = D3DLIGHT_POINT;
+	m_lit.Diffuse = d3d::WHITE;
+	m_lit.Specular = d3d::WHITE;
+	m_lit.Ambient = d3d::WHITE;
+	m_lit.Position = D3DXVECTOR3(0.0f, 3.0f, 0.0f);
 	m_lit.Direction = lit.Direction;
-	m_lit.Range = lit.Range;
+	m_lit.Range = 100.0f;
 	m_lit.Falloff = lit.Falloff;
-	m_lit.Attenuation0 = lit.Attenuation0;
-	m_lit.Attenuation1 = lit.Attenuation1;
-	m_lit.Attenuation2 = lit.Attenuation2;
+	m_lit.Attenuation0 = 0.0f;
+	m_lit.Attenuation1 = 0.9f;
+	m_lit.Attenuation2 = 0.0f;
 	m_lit.Theta = lit.Theta;
 	m_lit.Phi = lit.Phi;
 	return true;

@@ -92,6 +92,7 @@ bool Setup()
 	if (g_turnIndicator.create(Device, Width, Height, "Turn") == false) return false;
 	if (g_player1.create(Device, Width, Height, player1Str) == false) return false;
 	if (g_player2.create(Device, Width, Height, player2Str) == false) return false;
+
 	g_player1.setAnchor(DT_TOP | DT_LEFT);
 	g_player2.setAnchor(DT_TOP | DT_RIGHT);
 	g_turnIndicator.setAnchor(DT_TOP | DT_CENTER);
@@ -122,17 +123,14 @@ bool Setup()
 		g_sphere[i].setCenter(spherePos[i][0], (float)M_RADIUS , spherePos[i][1]);
 		g_sphere[i].setPower(0,0);
 	}
-	//debugging
-	//g_sphere[2].setCenter(spherePos[3][0], (float)M_RADIUS, spherePos[3][1]);
-	//g_sphere[3].setCenter(spherePos[2][0], (float)M_RADIUS, spherePos[2][1]);
 	
 	// create blue ball for set direction
     if (false == g_target_blueball.create(Device, d3d::BLUE)) return false;
 	g_target_blueball.setCenter(.0f, (float)M_RADIUS , .0f);
 	
 
-
 	if (g_cue.create(Device) == false) return false;
+
 	g_cue.setPosition(g_sphere[3].getCenter());
 	g_cue.HitCallback = [=](){
 		g_cue.setVisible(false);
@@ -147,18 +145,8 @@ bool Setup()
 		g_sphere[order+2].setPower(distance * cos(theta), distance * sin(theta));
 	};
 	// light setting 
-    D3DLIGHT9 lit;
-    ::ZeroMemory(&lit, sizeof(lit));
-    lit.Type         = D3DLIGHT_POINT;
-    lit.Diffuse      = d3d::WHITE; 
-	lit.Specular	 = d3d::WHITE;
-	lit.Ambient = d3d::WHITE;
-    lit.Position     = D3DXVECTOR3(0.0f, 3.0f, 0.0f);
-    lit.Range        = 100.0f;
-    lit.Attenuation0 = 0.0f;
-    lit.Attenuation1 = 0.9f;
-    lit.Attenuation2 = 0.0f;
-    if (false == g_light.create(Device, lit))
+   
+    if (false == g_light.create(Device))
         return false;
 	
 	// Position and aim the camera.
@@ -213,19 +201,25 @@ bool Display(float timeDelta)
 
 		g_player1.draw();
 		g_player2.draw();
-		g_turnIndicator.draw();
 
 		if (CSphere::IsAllStop(g_sphere[0], g_sphere[1], g_sphere[2], g_sphere[3]) && !g_cue.isPlaying()){
 			if (order == 0){
+				g_turnIndicator.setStr("<Turn");
 				g_cue.setPosition(g_sphere[3].getCenter());
 			}
 			else{
+				g_turnIndicator.setStr("Turn>");
 				g_cue.setPosition(g_sphere[2].getCenter());
 			}
 			g_cue.setVisible(true);
 			g_cue.setRotationRelative(g_target_blueball.getCenter());
 
 		}
+
+
+		g_turnIndicator.draw();
+
+		//draw blue ball when all balls stop
 		if (CSphere::IsAllStop(g_sphere[0], g_sphere[1], g_sphere[2], g_sphere[3]))
 			g_target_blueball.tempdraw(Device, g_mWorld, g_mView, g_light.getPosition4());
 
@@ -236,11 +230,13 @@ bool Display(float timeDelta)
 				g_sphere[i].hitBy(g_sphere[j]);
 			}
 		}
+
 		// update the position of each ball. during update, check whether each ball hit by walls.
 		for( i = 0; i < 4; i++) {
 			for(j = 0; j < 4; j++){ g_legowall[i].hitBy(g_sphere[j]); }
 			g_sphere[i].ballUpdate(timeDelta);
 		}
+
 		//TODO : shadow mapping
 		/*
 		Device->SetRenderState(D3DRS_STENCILENABLE, true);
@@ -345,100 +341,105 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 
 	switch (msg) {
-	case WM_DESTROY:
-	{
-		::PostQuitMessage(0);
-		break;
-	}
-	case WM_KEYDOWN:
-	{
-		switch (wParam) {
-		case VK_F1:
-			g_target_blueball.setCenter(.0f, (float)M_RADIUS, .0f);
-			break;
-		case VK_ESCAPE:
-			::DestroyWindow(hwnd);
-			break;
-		case VK_RETURN:
-			if (NULL != Device) {
-				wire = !wire;
-				Device->SetRenderState(D3DRS_FILLMODE,
-					(wire ? D3DFILL_WIREFRAME : D3DFILL_SOLID));
-			}
-			break;
-
-
-		case VK_SPACE:
-			//if (!(g_sphere[0].isStop() && g_sphere[1].isStop() && g_sphere[2].isStop() && g_sphere[3].isStop())) break;
-			D3DXVECTOR3 playerpos[2] = { g_sphere[3].getCenter() , g_sphere[2].getCenter() }; //3 : white 2 : yellow
-			D3DXVECTOR3 redball[2] = { g_sphere[0].getCenter(), g_sphere[1].getCenter() };
-			D3DXVECTOR3 targetpos = g_target_blueball.getCenter();
-
-			g_cue.playHit();
-
-			(order == 1) ? (order = 0) : (order = 1);
+		case WM_DESTROY:
+		{
+			::PostQuitMessage(0);
 			break;
 		}
-		break;
-	}
-	case WM_MOUSEMOVE:
-	{
-		int new_x = LOWORD(lParam);
-		int new_y = HIWORD(lParam);
-		float dx;
-		float dy;
+		case WM_KEYDOWN:
+		{
+			switch (wParam)
+			{
+				case VK_F1:
+					g_target_blueball.setCenter(.0f, (float)M_RADIUS, .0f);
+					break;
 
-		if (LOWORD(wParam) & MK_LBUTTON) {
-			if (g_cue.isPlaying())
-				break;
-			if (isReset) {
-				isReset = false;
-			}
-			else {
-				D3DXVECTOR3 vDist;
-				D3DXVECTOR3 vTrans;
-				D3DXMATRIX mTrans;
-				D3DXMATRIX mX;
-				D3DXMATRIX mY;
+				case VK_ESCAPE:
+					::DestroyWindow(hwnd);
+					break;
 
-				switch (move) {
-				case WORLD_MOVE:
-					dx = (old_x - new_x) * 0.01f;
-					dy = (old_y - new_y) * 0.01f;
-					D3DXMatrixRotationY(&mX, dx);
-					D3DXMatrixRotationX(&mY, dy);
-					g_mWorld = g_mWorld * mX * mY;
+				case VK_RETURN:
+					if (NULL != Device)
+					{
+						wire = !wire;
+						Device->SetRenderState(D3DRS_FILLMODE,
+						(wire ? D3DFILL_WIREFRAME : D3DFILL_SOLID));
+					}
+					break;
+
+				case VK_SPACE:
+
+					g_cue.playHit();
+					(order == 1) ? (order = 0) : (order = 1);
 
 					break;
-				}
 			}
-
-			old_x = new_x;
-			old_y = new_y;
-
+			break;
 		}
-		else {
-			isReset = true;
-
-			if (LOWORD(wParam) & MK_RBUTTON) {
-				if (LOWORD(wParam) <= 0)
-					new_x = 0;
-				if (new_y <= 0)
-					new_y = 0;
-				if (g_cue.isPlaying())
-					break;
-				dx = (old_x - new_x);// * 0.01f;
-				dy = (old_y - new_y);// * 0.01f;
-
-				D3DXVECTOR3 coord3d = g_target_blueball.getCenter();
-				g_target_blueball.setCenter(coord3d.x + dx*(-0.007f), coord3d.y, coord3d.z + dy*0.007f);
-			}
+		case WM_MOUSEMOVE:
+		{
 			int new_x = LOWORD(lParam);
 			int new_y = HIWORD(lParam);
 			float dx;
 			float dy;
 
-			if (LOWORD(wParam) & MK_LBUTTON) {
+			if (LOWORD(wParam) & MK_LBUTTON)
+			{
+				if (g_cue.isPlaying())
+					break;
+				if (isReset)
+				{
+					isReset = false;
+				}
+				else 
+				{
+					D3DXVECTOR3 vDist;
+					D3DXVECTOR3 vTrans;
+					D3DXMATRIX mTrans;
+					D3DXMATRIX mX;
+					D3DXMATRIX mY;
+
+					switch (move) 
+					{
+						case WORLD_MOVE:
+							dx = (old_x - new_x) * 0.01f;
+							dy = (old_y - new_y) * 0.01f;
+							D3DXMatrixRotationY(&mX, dx);
+							D3DXMatrixRotationX(&mY, dy);
+							g_mWorld = g_mWorld * mX * mY;
+
+						break;
+					}
+				}
+				old_x = new_x;
+				old_y = new_y;
+
+			}
+			else 
+			{
+				isReset = true;
+
+				if (LOWORD(wParam) & MK_RBUTTON) 
+				{
+					if (LOWORD(wParam) <= 0)
+						new_x = 0;
+					if (new_y <= 0)
+						new_y = 0;
+					if (g_cue.isPlaying())
+						break;
+					dx = (old_x - new_x);// * 0.01f;
+					dy = (old_y - new_y);// * 0.01f;
+
+					D3DXVECTOR3 coord3d = g_target_blueball.getCenter();
+					g_target_blueball.setCenter(coord3d.x + dx*(-0.007f), coord3d.y, coord3d.z + dy*0.007f);
+				}
+				int new_x = LOWORD(lParam);
+				int new_y = HIWORD(lParam);
+				float dx;
+				float dy;
+
+			if (LOWORD(wParam) & MK_LBUTTON) 
+			{
 
 				if (isReset) {
 					isReset = false;
@@ -476,10 +477,12 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				old_y = new_y;
 
 			}
-			else {
+			else 
+			{
 				isReset = true;
 
-				if (LOWORD(wParam) & MK_RBUTTON) {
+				if (LOWORD(wParam) & MK_RBUTTON)
+				{
 					dx = (old_x - new_x);// * 0.01f;
 					dy = (old_y - new_y);// * 0.01f;
 

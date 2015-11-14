@@ -4,7 +4,7 @@ class CLight{
 public:
 	CLight();
 	~CLight();
-	bool create(IDirect3DDevice9* pDevice, const D3DLIGHT9& lit, float radius = 0.1f);
+	bool create(IDirect3DDevice9* pDevice);
 	void destroy();
 	bool setLight(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld);
 	void draw(IDirect3DDevice9* pDevice);

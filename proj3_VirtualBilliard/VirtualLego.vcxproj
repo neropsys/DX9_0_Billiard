@@ -158,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="CCue.h" />
     <ClInclude Include="CLight.h" />
+    <ClInclude Include="CRay.h" />
     <ClInclude Include="CSphere.h" />
     <ClInclude Include="CText.h" />
     <ClInclude Include="CWall.h" />

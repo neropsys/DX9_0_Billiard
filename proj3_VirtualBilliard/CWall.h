@@ -2,7 +2,7 @@
 #include "CObject.h"
 #include "ICollidable.h"
 #include "d3dUtility.h"
-class CWall : public CObject, ICollidable{
+class CWall : public CObject, public ICollidable{
 public:
 	CWall();
 	~CWall();

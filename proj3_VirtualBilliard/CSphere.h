@@ -3,7 +3,7 @@
 #include "d3dUtility.h"
 #include "ICollidable.h"
 #include "ConstVariable.h"
-class CSphere : public CObject, ICollidable{
+class CSphere : public CObject, public ICollidable{
 public:
 	CSphere();
 	~CSphere();
