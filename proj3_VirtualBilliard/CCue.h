@@ -71,7 +71,7 @@ class CCue : public CObject{
 public:
 	CCue();
 	~CCue();
-	bool create(IDirect3DDevice9* pDevice, CObject::Shape shape);//will be moved to parent class
+	bool create(IDirect3DDevice9* pDevice);//will be moved to parent class
 	void draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld, const D3DXMATRIX& mView) override;
 	const inline D3DXMATRIX& getLocalTransform() const{ return m_mLocal; }//will be moved to parent class
 	const inline D3DXVECTOR3 getPosition()const{//will be moved to parent class
@@ -80,9 +80,9 @@ public:
 	void playHit();
 private:
 
-	LPD3DXMESH convertMesh(IDirect3DDevice9* pDevice, const LPD3DXMESH& input);//to be overrided
-	LPD3DXEFFECT LoadShader(IDirect3DDevice9* pDevice, const char* fileName);//will be moved to parent class
-	LPDIRECT3DTEXTURE9 LoadTexture(IDirect3DDevice9* pDevice, const char* fileName);//will be moved to parent class
+	LPD3DXMESH convertMesh(IDirect3DDevice9* pDevice, LPD3DXMESH& mesh) override;
+	//to be overrided
+
 
 
 

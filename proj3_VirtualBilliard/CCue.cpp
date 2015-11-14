@@ -1,59 +1,70 @@
 #include "CCue.h"
 #include "ConstVariable.h"
-CCue::CCue(){}
+CCue::CCue(){ D3DXMatrixIdentity(&m_mLocal); }
 CCue::~CCue(){}
-bool CCue::create(IDirect3DDevice9* pDevice, CObject::Shape shape){
-	HRESULT result;
-	char* effectFile;
-	char* textureFile;
-	switch (shape){
-	case SPHERE:
-		effectFile = SPHERE_EFFECT;
-		textureFile = SPHERE_TEXTURE;
-		result = D3DXCreateSphere(pDevice, M_RADIUS, SPHERE_SLICE, SPHERE_STACK, &m_pMesh, NULL));
-		break;
-	case CYLINDER:
-		result = D3DXCreateCylinder(pDevice, 10, 10, 50, 50, 50, &m_pMesh, NULL);
-		break;
-	case BOX:
-		break;
-	}
-	if (FAILED(result)){
-		return false;
-	}
+bool CCue::create(IDirect3DDevice9* pDevice){
+	if (CObject::create(pDevice, Shape::CYLINDER) == false) return false;
 	
-	m_pMesh = convertMesh(pDevice, m_pMesh);
-	if (m_pMesh == nullptr) return false;
+	LPD3DXMESH newMesh = convertMesh(pDevice, m_pMesh);
+	if (newMesh == nullptr) return false;
 
-	m_effect = LoadShader(pDevice, CUE_EFFECT);
-	if (m_effect == nullptr) return false;
-	
-	m_texture = LoadTexture(pDevice, CUE_TEXTURE);
-	if (m_texture == nullptr) return false;
+	effectFile = CYLINDER_EFFECT;
+	textureFile = CYLINDER_TEXTURE;
 
+
+	m_texture = LoadTexture(pDevice, textureFile);
+	m_effect = LoadShader(pDevice, effectFile);
+
+	m_pMesh->Release();
+	m_pMesh = newMesh;
 	return true;
-	//위 코드는 object::create로 옮길 예정
 }
 void CCue::draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld, const D3DXMATRIX& mView){
 	if (NULL == pDevice)
 		return;
-	pDevice->SetTransform(D3DTS_WORLD, &mWorld);
-	pDevice->MultiplyTransform(D3DTS_WORLD, &m_mLocal);
-	m_pMesh->DrawSubset(0);
-}
-LPD3DXMESH CCue::convertMesh(IDirect3DDevice9* pDevice, const LPD3DXMESH& input){
+	//pDevice->SetTransform(D3DTS_WORLD, &mWorld);
+	//pDevice->MultiplyTransform(D3DTS_WORLD, &m_mLocal);
+	//m_pMesh->DrawSubset(0);
+	//return;
 
-	D3DVERTEXELEMENT9 decl[] =
+	pDevice->SetTransform(D3DTS_WORLD, &mWorld);
+	D3DXMATRIX proj;
+	pDevice->GetTransform(D3DTS_PROJECTION, &proj);
+	pDevice->MultiplyTransform(D3DTS_WORLD, &m_mLocal);
+	m_effect->SetMatrix("gLocalMatrix", &m_mLocal);
+	m_effect->SetMatrix("gWorldMatrix", &mWorld);
+	m_effect->SetMatrix("gViewMatrix", &mView);
+	//m_effect->SetVector("gWorldLightPosition", &mLightPos);
+	m_effect->SetMatrix("gProjectionMatrix", &proj);
+	m_effect->SetTexture("DiffuseMap", m_texture);
+	//m_effect->
+
+	pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	pDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
+	pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	m_effect->SetTechnique("ColorShader");
+	UINT numPass = 0;
+	m_effect->Begin(&numPass, NULL);
 	{
-		{ 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-		{ 0, sizeof(D3DXVECTOR3), D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
-		{ 0, sizeof(D3DXVECTOR3)* 2, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
-		D3DDECL_END()//will be declared on 
-	};
+		for (UINT i = 0; i < numPass; ++i)
+		{
+			m_effect->BeginPass(i);
+			m_pMesh->DrawSubset(0);
+			m_effect->EndPass();
+		}
+	}
+	m_effect->End();
+
+}
+void CCue::playHit(){
+
+}
+LPD3DXMESH CCue::convertMesh(IDirect3DDevice9* pDevice, LPD3DXMESH& mesh){
+
 
 	LPD3DXMESH newMesh = nullptr;
 	VERTEX* pVerts;
-	HRESULT result = input->CloneMesh(D3DXMESH_SYSTEMMEM, decl, pDevice, &newMesh);
+	HRESULT result = mesh->CloneMesh(D3DXMESH_SYSTEMMEM, decl, pDevice, &newMesh);
 	
 	if (FAILED(result)) return nullptr;
 	
@@ -64,6 +75,9 @@ LPD3DXMESH CCue::convertMesh(IDirect3DDevice9* pDevice, const LPD3DXMESH& input)
 			D3DXVec3Normalize(&v, &v);
 			pVerts->tu = asin(v.x) / D3DX_PI + .5f;
 			pVerts->tv = asin(v.y) / D3DX_PI + .5f;
+
+			pVerts->pos.z += 3.f;
+
 			pVerts++;
 		}
 		newMesh->UnlockVertexBuffer();
@@ -74,28 +88,4 @@ LPD3DXMESH CCue::convertMesh(IDirect3DDevice9* pDevice, const LPD3DXMESH& input)
 		return nullptr;
 	}
 
-}
-
-LPD3DXEFFECT CCue::LoadShader(IDirect3DDevice9* pDevice, const char* fileName){
-	LPD3DXBUFFER pError = NULL;
-	LPD3DXEFFECT ret = NULL;
-	DWORD dwShaderFlags = 0;
-
-#if _DEBUG
-	dwShaderFlags |= D3DXSHADER_DEBUG;
-
-#endif
-	D3DXCreateEffectFromFile(pDevice, fileName, 0, 0, dwShaderFlags, 0, &ret, &pError);
-	if (!ret && pError){
-		int size = pError->GetBufferSize();
-		void* ack = pError->GetBufferPointer();
-		if (ack) {
-			char* str = new char[size];
-			sprintf(str, (const char*)ack, size);
-			OutputDebugString(str);
-			delete[] str;
-			//d3d::Release<LPD3DXBUFFER>(pError);
-		}
-	}
-	return ret;
 }

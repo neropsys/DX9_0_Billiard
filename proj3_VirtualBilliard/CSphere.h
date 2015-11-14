@@ -2,19 +2,13 @@
 #include "CObject.h"
 #include "d3dUtility.h"
 #include "ICollidable.h"
-#define SPHERE_EFFECT "SphereEffect.fx"
-#define SPHERE_PS_NAME "SpherePS.hlsl"
-#define SPHERE_TEXTURE "checkered.png"
-#define SPHERE_RED "redSmiley.png"
-#define SPHERE_BLUE "blueSmiley.png"
-#define SPHERE_YELLOW "yellowSmiley.png"
-#define SPHERE_WHITE "whiteSmiley.png"
+#include "ConstVariable.h"
 class CSphere : public CObject, ICollidable{
 public:
 	CSphere();
 	~CSphere();
 
-	bool create(IDirect3DDevice9* pDevice, CObject::Shape shape);
+	bool create(IDirect3DDevice9* pDevice, D3DCOLOR);
 
 	void draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld,
 		const D3DXMATRIX& mView) override;
@@ -62,10 +56,6 @@ private:
 
 	D3DXVECTOR3				velocity;
 	float                   m_radius;
-
-	LPD3DXEFFECT LoadShader(IDirect3DDevice9* pDevice, const char* fileName);
-	LPDIRECT3DTEXTURE9 LoadTexture(IDirect3DDevice9* pDevice, const char* fileName);
-	LPD3DXMESH createMesh(IDirect3DDevice9* pDevice, float rad, UINT slices, UINT stacks);
-
+	LPD3DXMESH convertMesh(IDirect3DDevice9* pDevice, LPD3DXMESH& mesh) override;
 	void moveCenter(D3DXVECTOR3 velocity);
 };

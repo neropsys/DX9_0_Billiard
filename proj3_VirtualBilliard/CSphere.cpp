@@ -1,6 +1,7 @@
 #include "CSphere.h"
 #include <d3dx9math.h>
 #include <d3d9.h>
+#include "ConstVariable.h"
 #define CENTERDESTINATION(x1, x2, y1, y2) (sqrtf((pow(x1 - x2, 2)) + (pow(y1 - y2, 2))))
 
 
@@ -16,27 +17,32 @@ CSphere::CSphere() {
 
 CSphere::~CSphere(){}
 
-bool CSphere::create(IDirect3DDevice9* pDevice, D3DXCOLOR color){
+bool CSphere::create(IDirect3DDevice9* pDevice, D3DCOLOR color){
+	if (CObject::create(pDevice, Shape::SPHERE) == false) return false;
+	LPD3DXMESH newMesh = convertMesh(pDevice, m_pMesh);
+	if (newMesh == nullptr) return false;
 	if (color == d3d::RED){
-		m_texture = LoadTexture(pDevice, SPHERE_RED);
+		textureFile = SPHERE_RED;
 	}
 	else if (color == d3d::YELLOW){
-		m_texture = LoadTexture(pDevice, SPHERE_YELLOW);
+		textureFile = SPHERE_YELLOW;
 	}
 	else if (color == d3d::WHITE){
-		m_texture = LoadTexture(pDevice, SPHERE_WHITE);
+		textureFile = SPHERE_WHITE;
 	}
 	else{
-		m_texture = LoadTexture(pDevice, SPHERE_BLUE);
+		textureFile = SPHERE_BLUE;
 	}
-	//m_texture = LoadTexture(pDevice, SPHERE_TEXTURE);
-	if (!m_texture)
+	effectFile = SPHERE_EFFECT;
+	m_texture = LoadTexture(pDevice, textureFile);
+	m_effect = LoadShader(pDevice, effectFile);
+
+
+	if (m_texture == nullptr || m_effect == nullptr)
 		return false;
-		
-	m_effect = LoadShader(pDevice, SPHERE_EFFECT);
-	if (!m_effect)
-		return false;
-	m_pMesh = createMesh(pDevice, getRadius(), 50, 50);
+
+	m_pMesh->Release();
+	m_pMesh = newMesh;
 
 	return true;
 }
@@ -190,51 +196,10 @@ void CSphere::setCenter(float x, float y, float z) {
 void CSphere::moveCenter(D3DXVECTOR3 vel){
 	this->getCenter() + vel;
 }
+LPD3DXMESH CSphere::convertMesh(IDirect3DDevice9* pDevice, LPD3DXMESH& mesh){
+	LPD3DXMESH newMesh = nullptr;
 
-LPD3DXEFFECT CSphere::LoadShader(IDirect3DDevice9* pDevice, const char* fileName){
-	LPD3DXBUFFER pError = NULL;
-	LPD3DXEFFECT ret = NULL;
-	DWORD dwShaderFlags = 0;
-
-#if _DEBUG
-	dwShaderFlags |= D3DXSHADER_DEBUG;
-
-#endif
-	D3DXCreateEffectFromFile(pDevice, fileName, 0, 0, dwShaderFlags, 0, &ret, &pError);
-	if (!ret && pError){
-		int size = pError->GetBufferSize();
-		void* ack = pError->GetBufferPointer();
-		if (ack) {
-			char* str = new char[size];
-			sprintf(str, (const char*)ack, size);
-			OutputDebugString(str);
-			delete[] str;
-			//d3d::Release<LPD3DXBUFFER>(pError);
-		}
-	}
-
-	return ret;
-
-}
-
-LPDIRECT3DTEXTURE9 CSphere::LoadTexture(IDirect3DDevice9* pDevice, const char* fileName) {
-	LPDIRECT3DTEXTURE9 ret = NULL;
-	if (FAILED(D3DXCreateTextureFromFile(pDevice, fileName, &ret))) {
-		OutputDebugString("Failed to load texture: ");
-		OutputDebugString(fileName);
-		OutputDebugString("\n");
-	}
-	return ret;
-}
-LPD3DXMESH CSphere::createMesh(IDirect3DDevice9* pDevice, float rad, UINT slices, UINT stacks){
-	LPD3DXMESH mesh;
-	if (FAILED(D3DXCreateSphere(pDevice, rad, slices, stacks, &mesh, NULL))){
-		return NULL;
-	}
-
-	LPD3DXMESH newMesh;
 	mesh->CloneMesh(D3DXMESH_SYSTEMMEM, decl, pDevice, &newMesh);
-
 
 	VERTEX* pVerts;
 	if (SUCCEEDED(newMesh->LockVertexBuffer(0, (LPVOID*)&pVerts))){
@@ -248,7 +213,5 @@ LPD3DXMESH CSphere::createMesh(IDirect3DDevice9* pDevice, float rad, UINT slices
 		}
 		newMesh->UnlockVertexBuffer();
 	}
-	mesh->Release();
 	return newMesh;
-
 }

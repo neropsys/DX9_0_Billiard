@@ -15,6 +15,8 @@
 #include "CWall.h"
 #include "CLight.h"
 #include "CText.h"
+#include "ConstVariable.h"
+#include "CCue.h"
 #include <vector>
 #include <ctime>
 #include <cstdlib>
@@ -60,6 +62,9 @@ CLight	g_light;
 
 CText g_text;
 
+CCue g_cue;
+
+
 double g_camera_pos[3] = {0.0, 5.0, -8.0};
 
 // -----------------------------------------------------------------------------
@@ -81,20 +86,20 @@ bool Setup()
     D3DXMatrixIdentity(&g_mProj);
 		
 	// create plane and set the position
-    if (false == g_legoPlane.create(Device, -1, -1, 9, 0.03f, 6, d3d::GREEN)) return false;
+    if (false == g_legoPlane.create(Device, PLANE_WIDTH, PLANE_HEIGHT, PLANE_DEPTH, CWall::Plane)) return false;
     //g_legoPlane.setPosition(0.0f, -0.0006f / 5, 0.0f);
 	
-
+	if (g_cue.create(Device) == false) return false;
 	if (g_text.create(Device, Width, Height) == false) return false;
 
 	// create walls and set the position. note that there are four walls
-	if (false == g_legowall[0].create(Device, -1, -1, 9, 0.3f, 0.12f, d3d::DARKRED)) return false;
+	if (false == g_legowall[0].create(Device, EDGE_H_WIDTH, EDGE_HEIGHT, EDGE_H_DEPTH, CWall::Edge)) return false;
 	g_legowall[0].setPosition(0.0f, 0.12f, 3.06f);
-	if (false == g_legowall[1].create(Device, -1, -1, 9, 0.3f, 0.12f, d3d::DARKRED)) return false;
+	if (false == g_legowall[1].create(Device, EDGE_H_WIDTH, EDGE_HEIGHT, EDGE_H_DEPTH, CWall::Edge)) return false;
 	g_legowall[1].setPosition(0.0f, 0.12f, -3.06f);
-	if (false == g_legowall[2].create(Device, -1, -1, 0.12f, 0.3f, 6.24f, d3d::DARKRED)) return false;
+	if (false == g_legowall[2].create(Device, EDGE_V_WIDTH, EDGE_HEIGHT, EDGE_V_DEPTH, CWall::Edge)) return false;
 	g_legowall[2].setPosition(4.56f, 0.12f, 0.0f);
-	if (false == g_legowall[3].create(Device, -1, -1, 0.12f, 0.3f, 6.24f, d3d::DARKRED)) return false;
+	if (false == g_legowall[3].create(Device, EDGE_V_WIDTH, EDGE_HEIGHT, EDGE_V_DEPTH, CWall::Edge)) return false;
 	g_legowall[3].setPosition(-4.56f, 0.12f, 0.0f);
 
 	// create four balls and set the position
@@ -154,6 +159,7 @@ void Cleanup(void)
 		g_sphere[i].destroy();
 		g_legowall[i].destroy();
 	}
+	g_cue.destroy();
     destroyAllLegoBlock();
     g_light.destroy();
 }
@@ -173,6 +179,12 @@ bool Display(float timeDelta)
 		Device->BeginScene();
 
 		g_text.draw("fdsfds", 0, 0);
+
+
+		g_cue.draw(Device, g_mWorld, g_mView);
+		g_cue.setPosition(g_target_blueball.getCenter());
+
+
 
 		// check whether any two balls hit together and update the direction of balls
 		for(i = 0 ;i < 4; i++){

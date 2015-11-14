@@ -6,14 +6,15 @@ class CWall : public CObject, ICollidable{
 public:
 	CWall();
 	~CWall();
-
+	enum Type{
+		Edge,
+		Plane
+	};
 	bool create(IDirect3DDevice9* pDevice,
-				float ix,
-				float iz,
 				float iwidth,
 				float iheight,
 				float idepth,
-				D3DXCOLOR color = d3d::WHITE);
+				Type type);
 
 	void draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld,
 		const D3DXMATRIX& mView) override;
@@ -25,10 +26,9 @@ public:
 
 private:
 	using CObject::setLocalTransform;
-	D3DMATERIAL9			m_mtrl;//temporary value. will be removed
 	float                   m_width;
 	float                   m_depth;
 	float					m_height;
-
+	LPD3DXMESH convertMesh(IDirect3DDevice9* pDevice, LPD3DXMESH& input) override;
 
 };
