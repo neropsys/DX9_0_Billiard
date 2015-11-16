@@ -60,12 +60,18 @@ D3DXMATRIX g_mProj;
 // Global variables
 // -----------------------------------------------------------------------------
 CWall	g_legoPlane;
-D3DXPLANE g_Plane(.0f, 1.f, 0.f, 0.f);
+D3DXPLANE g_Plane(-4.0f, 0.f, -3.f, 0.f);
 CWall	g_legowall[4];
 CSphere	g_sphere[4];
 /*CSphere g_redSphere[2];
 CSphere g_whiteSphere;
 CSphere g_yellowSphere;*/
+
+LPDIRECT3DTEXTURE9 g_pShadowMap = nullptr;
+LPDIRECT3DSURFACE9 g_pDSShadow = nullptr;
+
+D3DXMATRIXA16	g_mShadowProj;
+
 CSphere	g_target_blueball;
 CLight	g_light;
 static int order = 0;
@@ -78,7 +84,7 @@ CText g_turnIndicator;
 CCue g_cue;
 
 
-double g_camera_pos[3] = {0.0, 5.0, -8.0};
+D3DXVECTOR4 g_camera_pos(0.0, 5.0, -8.0, 1.f);
 
 // -----------------------------------------------------------------------------
 // Functions
@@ -115,7 +121,30 @@ bool Setup()
     if (false == g_legoPlane.create(Device, PLANE_WIDTH, PLANE_HEIGHT, PLANE_DEPTH, CWall::Plane)) return false;
     //g_legoPlane.setPosition(0.0f, -0.0006f / 5, 0.0f);
 	
+	/*
+	//shadow map texture
+	Device->CreateTexture(
+		512,
+		512,
+		1,
+		D3DUSAGE_RENDERTARGET,
+		D3DFMT_R32F,
+		D3DPOOL_DEFAULT,
+		&g_pShadowMap, NULL);
 
+	//create depth stencil buffer
+
+	Device->CreateDepthStencilSurface(
+		512,
+		512,
+		_D3DFORMAT::D3DFMT_D24X8,
+		D3DMULTISAMPLE_NONE,
+		0,
+		TRUE,
+		&g_pDSShadow,
+		NULL);
+
+	D3DXMatrixPerspectiveFovLH(&g_mShadowProj, 1.f, 1, 0.10f, 100.f);*/
 	// create walls and set the position. note that there are four walls
 	if (false == g_legowall[0].create(Device, EDGE_H_WIDTH, EDGE_HEIGHT, EDGE_H_DEPTH, CWall::Edge)) return false;
 	g_legowall[0].setPosition(0.0f, 0.12f, 3.06f);
@@ -231,6 +260,8 @@ bool Display(float timeDelta)
 	if( Device )
 	{
 		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, 0x00afafaf, 1.0f, 0);
+		
+		
 		Device->BeginScene();
 
 		campSetting();
@@ -257,7 +288,7 @@ bool Display(float timeDelta)
 
 		//draw blue ball when all balls stop
 		if (CSphere::IsAllStop(g_sphere[0], g_sphere[1], g_sphere[2], g_sphere[3]))
-			g_target_blueball.tempdraw(Device, g_mWorld, g_mView, g_light.getPosition4());
+			g_target_blueball.tempdraw(Device, g_mWorld, g_mView, g_light.getPosition4(),g_camera_pos );
 
 		// check whether any two balls hit together and update the direction of balls
 		for(i = 0 ;i < 4; i++){
@@ -350,7 +381,7 @@ bool Display(float timeDelta)
 		g_legoPlane.draw(Device, g_mWorld, g_mView);
 		for (i=0;i<4;i++) 	{
 			g_legowall[i].draw(Device, g_mWorld, g_mView);
-			g_sphere[i].tempdraw(Device, g_mWorld, g_mView, g_light.getPosition4());//  draw(Device, g_mWorld, g_mView);
+			g_sphere[i].tempdraw(Device, g_mWorld, g_mView, g_light.getPosition4(), g_camera_pos);//  draw(Device, g_mWorld, g_mView);
 		}
 
         g_light.draw(Device);

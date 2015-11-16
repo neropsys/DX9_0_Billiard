@@ -87,7 +87,6 @@ private:
 	bool playing;
 	bool isVisible;
 	void playAnimation();
-
 	float moveDistance;
 	bool pulled;
 	float movementDelta = CUE_MOVEMENT_DELTA;

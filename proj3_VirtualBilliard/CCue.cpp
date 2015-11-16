@@ -72,20 +72,20 @@ void CCue::playHit(){
 }
 void CCue::playAnimation(){
 	D3DXVECTOR3 position =	this->getPosition();
-	D3DXVECTOR3 rotation = this->getRotation();
-	movementDelta *= 20;
+	float rotation = D3DXToRadian(this->getRotation().y);
+	movementDelta *= 1;
 	if (pulled == false){
 		moveDistance += movementDelta;
-		position.z += movementDelta * cos(rotation.y);
-		position.x += movementDelta * sin(rotation.y);
-		if (moveDistance > CYLINDER_MOVEDISTANCE){
+		position.z += movementDelta * cos(rotation);
+		position.x += movementDelta * sin(rotation);
+		if (moveDistance > 20){
 			pulled = true;
 		}
 	}
 	else{
 		moveDistance -= movementDelta;
-		position.z -= movementDelta * cos(rotation.y);
-		position.x -= movementDelta * sin(rotation.y);
+		position.z -= movementDelta * cos(rotation);
+		position.x -= movementDelta * sin(rotation);
 		if (moveDistance < 0){
 			pulled = false;
 			moveDistance = 0;
@@ -97,15 +97,13 @@ void CCue::playAnimation(){
 
 }
 void CCue::setRotationRelative(const D3DXVECTOR3& position){
-	D3DXVECTOR3 thisPosition = this->getPosition();
-	D3DXVECTOR3 relative = position;
-//	D3DXVec3Normalize(&thisPosition, &thisPosition);
-//	D3DXVec3Normalize(&relative, &relative);
-	float dot = D3DXVec3Dot(&thisPosition, &relative);
-	float cross = thisPosition.x * relative.y - thisPosition.y * relative.x;
-	float angle = (atan2(cross, dot) * 180 / PI) + 180;
-	//this->setRotation(0, 90, 0);
-	this->setRotation(0,-angle, 0);
+	D3DXVECTOR3 thisPosition = this->getPosition() - position;
+	//this->bluePosition = position;
+
+	thisPosition /= sqrt(pow(thisPosition.x, 2) + pow(thisPosition.y, 2) + pow(thisPosition.z, 2));
+	float septa = thisPosition.x > 0 ? (acos(thisPosition.z) * 180 / PI) : 360 - (acos(thisPosition.z) * 180 / PI);
+	this->setRotation(0, septa, 0);
+	
 
 }
 LPD3DXMESH CCue::convertMesh(IDirect3DDevice9* pDevice, LPD3DXMESH& mesh){
@@ -114,18 +112,23 @@ LPD3DXMESH CCue::convertMesh(IDirect3DDevice9* pDevice, LPD3DXMESH& mesh){
 	LPD3DXMESH newMesh = nullptr;
 	VERTEX* pVerts;
 	HRESULT result = mesh->CloneMesh(D3DXMESH_SYSTEMMEM, decl, pDevice, &newMesh);
-	
+	float u = 0;
+	float fv = 0;
 	if (FAILED(result)) return nullptr;
 	
 	if (SUCCEEDED(newMesh->LockVertexBuffer(0, (LPVOID*)&pVerts))){
 		int numVerts = newMesh->GetNumVertices();
 		for (int i = 0; i < numVerts; i++){
 			D3DXVECTOR3 v = pVerts->pos - getPosition();
-			D3DXVec3Normalize(&v, &v);
-			pVerts->tu = asin(v.x) / D3DX_PI + .5f;
-			pVerts->tv = asin(v.y) / D3DX_PI + .5f;
-
-			pVerts->pos.z += 3.f;
+			if (v.x >= 0){
+				u = asin(v.y*0.11f);
+			}
+			else{
+				u = -asin(v.y*0.11f) + PI;
+			}
+			fv = v.z;
+			pVerts->tu = u;
+			pVerts->tv = fv;
 
 			pVerts++;
 		}
