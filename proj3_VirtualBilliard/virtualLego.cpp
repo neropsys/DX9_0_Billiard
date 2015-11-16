@@ -50,6 +50,7 @@ bool base_angle= false, white_angle = false, yellow_angle = false;
 D3DXMATRIX g_mWorld;
 D3DXMATRIX g_mView;
 D3DXMATRIX g_mProj;
+D3DXMATRIX g_mBackup;
 
 #define M_RADIUS 0.21   // ball radius
 #define PI 3.14159265
@@ -116,6 +117,7 @@ bool Setup()
     D3DXMatrixIdentity(&g_mWorld);
     D3DXMatrixIdentity(&g_mView);
     D3DXMatrixIdentity(&g_mProj);
+	D3DXMatrixIdentity(&g_mBackup);
 		
 	// create plane and set the position
     if (false == g_legoPlane.create(Device, PLANE_WIDTH, PLANE_HEIGHT, PLANE_DEPTH, CWall::Plane)) return false;
@@ -227,9 +229,11 @@ void campSetting()
 {
 	if (base_angle)
 	{
+		g_mWorld = g_mBackup;
 		at_x = 0.0f, at_y = 5.0f, at_z = -8.0;
 		point_x = 0.0f, point_y = 0.0f, point_z = 0.0f;
-		up_x = 0.0f, up_y = 2.0f, up_z = 0.0f;
+		up_x = 0.0f, up_y = 2.0f, up_z = 0.0f; LRbuf = 0, UDbuf = 0;
+		base_angle = false, yellow_angle = false, white_angle = false;
 	}
 	if (white_angle)
 	{
@@ -239,7 +243,9 @@ void campSetting()
 	}
 	if (yellow_angle)
 	{
-
+		at_x = g_sphere[2].getCenter().x, at_y = g_sphere[2].getCenter().y + 1.5, at_z = g_sphere[2].getCenter().z - 1.5;
+		point_x = g_sphere[2].getCenter().x, point_y = g_sphere[2].getCenter().y, point_z = g_sphere[2].getCenter().z;
+		up_x = 0.0f, up_y = 2.0f, up_z = 0.0f;
 	}
 
 	D3DXVECTOR3 pos(at_x, at_y, at_z);
@@ -261,13 +267,12 @@ bool Display(float timeDelta)
 	{
 		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, 0x00afafaf, 1.0f, 0);
 		
-		
 		Device->BeginScene();
-
-		campSetting();
 
 		g_player1.draw();
 		g_player2.draw();
+
+		campSetting();
 
 		if (CSphere::IsAllStop(g_sphere[0], g_sphere[1], g_sphere[2], g_sphere[3]) && !g_cue.isPlaying()){
 			if (order == 0){
@@ -423,13 +428,13 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					yellow_angle = false;
 					break;
 
-				case 0x53: // N key
+				case 0x4e: // N key
 					base_angle = false;
 					white_angle = true;
 					yellow_angle = false;
 					break;
 
-				case 0x54: // M key
+				case 0x4d: // M key
 					base_angle = false;
 					white_angle = false;
 					yellow_angle = true;
@@ -457,6 +462,50 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 					g_cue.playHit();
 					(order == 1) ? (order = 0) : (order = 1);
 
+					break;
+				default:
+					D3DXMATRIX kX;
+					D3DXMATRIX kY;
+					leftright = 0, updown = 0;
+					if (wParam == VK_RIGHT)
+					{
+						if (LRbuf >= 1.6)
+							leftright = 0;
+						else{
+							LRbuf += 0.1;
+							leftright = 0.1;
+						}
+					}
+					if (wParam == VK_LEFT)
+					{
+						if (LRbuf <= -1.6)
+							leftright = 0;
+						else{
+							LRbuf -= 0.1;
+							leftright = -0.1;
+						}
+					}
+					if (wParam == VK_UP)
+					{
+						if (UDbuf <= -1.0)
+							updown = 0;
+						else{
+							UDbuf -= 0.1;
+							updown = -0.1;
+						}
+					}
+					if (wParam == VK_DOWN)
+					{
+						if (UDbuf >= 0.5)
+							updown = 0;
+						else{
+							UDbuf += 0.1;
+							updown = 0.1;
+						}
+					}
+					D3DXMatrixRotationY(&kY, leftright);
+					D3DXMatrixRotationX(&kX, updown);
+					g_mWorld = g_mWorld * kX * kY;
 					break;
 			}
 			break;
