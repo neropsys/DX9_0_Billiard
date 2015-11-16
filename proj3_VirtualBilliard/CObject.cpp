@@ -35,6 +35,11 @@ void CObject::setRotation(float x, float y, float z){
 void CObject::setRotation(const D3DXVECTOR3& rot){
 	setRotation(rot.x, rot.y, rot.z);
 }
+const D3DXMATRIX CObject::getRotationMat(){
+	D3DXMATRIX m;
+	D3DXMatrixRotationYawPitchRoll(&m, D3DXToRadian(m_roty), D3DXToRadian(m_rotx), D3DXToRadian(m_rotz));
+	return m;
+}
 void CObject::setPosition(float x, float y, float z){
 
 	D3DXMATRIX m;

@@ -11,9 +11,10 @@ public:
 	void inline setLocalTransform(const D3DXMATRIX& mLocal) { m_mLocal = mLocal; }
 	void setPosition(float x, float y, float z);
 	void setPosition(const D3DXVECTOR3& position);
-	const inline D3DXMATRIX&  getLocalTransform(void) const { return m_mLocal; }
+	const inline D3DXMATRIX  getLocalTransform(void) const { return m_mLocal; }
 	void setRotation(float x, float y, float z);
 	const inline D3DXVECTOR3 getRotation(){ return D3DXVECTOR3(m_rotx, m_roty, m_rotz); }
+	const D3DXMATRIX getRotationMat();
 	void setRotation(const D3DXVECTOR3&);
 
 

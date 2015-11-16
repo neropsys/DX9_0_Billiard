@@ -5,6 +5,8 @@ matrix gProjectionMatrix : Projection;
 
 float4 gWorldCameraPosition;
 float4 gWorldLightPosition;
+float gSpeedVectorU;
+float gSpeedVectorV;
 struct VS_INPUT
 {
 	float4 mPosition : POSITION;
@@ -44,10 +46,11 @@ VS_OUTPUT vs_main(VS_INPUT Input)
 	worldNormal = normalize(worldNormal);
 	Output.mDiffuse = dot(-lightDir, worldNormal);
 	Output.mReflection = reflect(lightDir, worldNormal);
-	Output.mTexCoord = Input.mTexCoord;
+	//Output.mTexCoord = Input.mTexCoord + float2(gSpeedVectorU, gSpeedVectorV);
+
 	//Input.mPosition.w = 1.0f;
 	//Output.mDiffuse = Input.Normal * dot(-lightDir, worldNormal);
-	//Output.mTexCoord = Input.mTexCoord;
+	Output.mTexCoord = Input.mTexCoord;
 	return Output;
 }
 
@@ -56,6 +59,8 @@ sampler DiffuseSampler = sampler_state
 {
 	Texture = (DiffuseMap);
 	Filter = MIN_MAG_MIP_LINEAR;
+	AddressU = MIRROR;
+	AddressV = MIRROR;
 	
 };
 

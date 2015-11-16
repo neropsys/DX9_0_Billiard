@@ -67,6 +67,8 @@ void CSphere::tempdraw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld,
 	m_effect->SetVector("gWorldCameraPosition", &camPos);
 	m_effect->SetMatrix("gProjectionMatrix", &proj);
 	m_effect->SetTexture("DiffuseMap", m_texture);
+	m_effect->SetFloat("gSpeedVectorU", velocity.x);
+	m_effect->SetFloat("gSpeedVectorV", velocity.z);
 	//m_effect->
 
 	pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
@@ -152,6 +154,9 @@ void CSphere::ballUpdate(float timeDiff)
 		else if (tZ >= (3 - M_RADIUS))
 			tZ = 3 - M_RADIUS;
 		*/
+
+		this->setRotation(10 * velocity.x, 0, 10 * velocity.z);
+
 		this->setCenter(tX, cord.y, tZ);
 	}
 	else { this->setPower(0, 0); }

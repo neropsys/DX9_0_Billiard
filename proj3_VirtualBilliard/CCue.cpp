@@ -33,13 +33,12 @@ void CCue::draw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld, const D3DXM
 	//m_pMesh->DrawSubset(0);
 	//return;
 	if (!isVisible) return;
-	if (playing){
-		playAnimation();
-	}
 	pDevice->SetTransform(D3DTS_WORLD, &mWorld);
 	D3DXMATRIX proj;
 	pDevice->GetTransform(D3DTS_PROJECTION, &proj);
-
+	if (playing){
+		playAnimation();
+	}
 	pDevice->MultiplyTransform(D3DTS_WORLD, &m_mLocal);
 	
 	m_effect->SetMatrix("gLocalMatrix", &m_mLocal);
@@ -93,7 +92,8 @@ void CCue::playAnimation(){
 			playing = false;
 		}
 	}
-	this->setPosition(position);
+	setPosition(position);
+	setRotation(0, getRotation().y, 0);
 
 }
 void CCue::setRotationRelative(const D3DXVECTOR3& position){
@@ -127,6 +127,7 @@ LPD3DXMESH CCue::convertMesh(IDirect3DDevice9* pDevice, LPD3DXMESH& mesh){
 				u = -asin(v.y*0.11f) + PI;
 			}
 			fv = v.z;
+			pVerts->pos.z += 3;
 			pVerts->tu = u;
 			pVerts->tv = fv;
 
