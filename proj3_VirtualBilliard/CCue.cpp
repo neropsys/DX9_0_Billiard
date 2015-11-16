@@ -112,18 +112,23 @@ LPD3DXMESH CCue::convertMesh(IDirect3DDevice9* pDevice, LPD3DXMESH& mesh){
 	LPD3DXMESH newMesh = nullptr;
 	VERTEX* pVerts;
 	HRESULT result = mesh->CloneMesh(D3DXMESH_SYSTEMMEM, decl, pDevice, &newMesh);
-	
+	float u = 0;
+	float fv = 0;
 	if (FAILED(result)) return nullptr;
 	
 	if (SUCCEEDED(newMesh->LockVertexBuffer(0, (LPVOID*)&pVerts))){
 		int numVerts = newMesh->GetNumVertices();
 		for (int i = 0; i < numVerts; i++){
 			D3DXVECTOR3 v = pVerts->pos - getPosition();
-			D3DXVec3Normalize(&v, &v);
-			pVerts->tu = asin(v.x) / D3DX_PI + .5f;
-			pVerts->tv = asin(v.y) / D3DX_PI + .5f;
-
-			pVerts->pos.z += 3.f;
+			if (v.x >= 0){
+				u = asin(v.y*0.11f);
+			}
+			else{
+				u = -asin(v.y*0.11f) + PI;
+			}
+			fv = v.z;
+			pVerts->tu = u;
+			pVerts->tv = fv;
 
 			pVerts++;
 		}

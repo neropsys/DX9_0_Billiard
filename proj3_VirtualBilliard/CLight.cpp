@@ -21,10 +21,9 @@ bool CLight::create(IDirect3DDevice9* pDevice){
 
 	m_bound._center = D3DXVECTOR3(0.0f, 3.0f, 0.0f);
 	m_bound._radius = 0.1f;
-
 	m_lit.Type = D3DLIGHT_POINT;
-	m_lit.Diffuse = d3d::WHITE;
-	m_lit.Specular = d3d::WHITE;
+	//m_lit.Diffuse = d3d::WHITE;
+	//m_lit.Specular = d3d::WHITE;
 	m_lit.Ambient = d3d::WHITE;
 	m_lit.Position = D3DXVECTOR3(0.0f, 3.0f, 0.0f);
 	m_lit.Direction = lit.Direction;
