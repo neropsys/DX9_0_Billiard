@@ -36,6 +36,15 @@ const float spherePos[4][2] = { {-2.7f,0} , {+2.4f,0} , {3.3f,0} , {-2.7f,-0.9f}
 // initialize the color of each ball (ball0 ~ ball3)
 const D3DXCOLOR sphereColor[4] = {d3d::RED, d3d::RED, d3d::YELLOW, d3d::WHITE};
 // -----------------------------------------------------------------------------
+// Camera view
+// -----------------------------------------------------------------------------
+float leftright = 0, updown = 0, LRbuf = 0, UDbuf = 0;
+float at_x = 0.0f, at_y = 5.0f, at_z = -8.0;
+float point_x = 0.0f, point_y = 0.0f, point_z = 0.0f;
+float up_x = 0.0f, up_y = 2.0f, up_z = 0.0f;
+bool base_angle= false, white_angle = false, yellow_angle = false;
+
+// -----------------------------------------------------------------------------
 // Transform matrices
 // -----------------------------------------------------------------------------
 D3DXMATRIX g_mWorld;
@@ -185,6 +194,31 @@ void Cleanup(void)
     g_light.destroy();
 }
 
+void campSetting()
+{
+	if (base_angle)
+	{
+		at_x = 0.0f, at_y = 5.0f, at_z = -8.0;
+		point_x = 0.0f, point_y = 0.0f, point_z = 0.0f;
+		up_x = 0.0f, up_y = 2.0f, up_z = 0.0f;
+	}
+	if (white_angle)
+	{
+		at_x = g_sphere[3].getCenter().x, at_y = g_sphere[3].getCenter().y + 1.5, at_z = g_sphere[3].getCenter().z - 1.5;
+		point_x = g_sphere[3].getCenter().x, point_y = g_sphere[3].getCenter().y, point_z = g_sphere[3].getCenter().z;
+		up_x = 0.0f, up_y = 2.0f, up_z = 0.0f;
+	}
+	if (yellow_angle)
+	{
+
+	}
+
+	D3DXVECTOR3 pos(at_x, at_y, at_z);
+	D3DXVECTOR3 target(point_x, point_y, point_z);
+	D3DXVECTOR3 up(up_x, up_y, up_z);
+	D3DXMatrixLookAtLH(&g_mView, &pos, &target, &up);
+	Device->SetTransform(D3DTS_VIEW, &g_mView);
+}
 
 // timeDelta represents the time between the current image frame and the last image frame.
 // the distance of moving balls should be "velocity * timeDelta"
@@ -198,6 +232,8 @@ bool Display(float timeDelta)
 	{
 		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, 0x00afafaf, 1.0f, 0);
 		Device->BeginScene();
+
+		campSetting();
 
 		g_player1.draw();
 		g_player2.draw();
@@ -350,6 +386,24 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
 			switch (wParam)
 			{
+				case 0x42: // B Key
+					base_angle = true;
+					white_angle = false;
+					yellow_angle = false;
+					break;
+
+				case 0x53: // N key
+					base_angle = false;
+					white_angle = true;
+					yellow_angle = false;
+					break;
+
+				case 0x54: // M key
+					base_angle = false;
+					white_angle = false;
+					yellow_angle = true;
+					break;
+
 				case VK_F1:
 					g_target_blueball.setCenter(.0f, (float)M_RADIUS, .0f);
 					break;
