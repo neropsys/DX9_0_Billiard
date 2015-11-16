@@ -150,14 +150,37 @@ LPD3DXMESH CWall::convertMesh(IDirect3DDevice9* pDevice, LPD3DXMESH& mesh){
 	HRESULT result = mesh->CloneMesh(D3DXMESH_SYSTEMMEM, decl, pDevice, &newMesh);
 
 	if (FAILED(result)) return nullptr;
-
+	float u = 0;
+	float v = 0;
+	bool reverse = false;
 	if (SUCCEEDED(newMesh->LockVertexBuffer(0, (LPVOID*)&pVerts))){
 		int numVerts = newMesh->GetNumVertices();
 		for (int i = 0; i < numVerts; i++){
-			D3DXVECTOR3 v = pVerts->pos - getPosition();
-			D3DXVec3Normalize(&v, &v);
-			pVerts->tu = asin(v.x) / D3DX_PI + .5f;
-			pVerts->tv = asin(v.y) / D3DX_PI + .5f;
+			pVerts->tu = u;
+			pVerts->tv = v;
+		
+			if (u == 0 && v==0){
+				if (reverse)
+					u++;
+				else
+					v++;
+				
+			}
+			else if (v == 1 && u == 0){
+				u++;
+			
+			}
+			else if (v == 0 && u == 1){
+				v++;
+			
+			}
+			else{
+				if (reverse)
+					reverse = false;
+				else reverse = true;
+				u = 0;
+				v = 0;
+			}
 			pVerts++;
 		}
 		newMesh->UnlockVertexBuffer();
