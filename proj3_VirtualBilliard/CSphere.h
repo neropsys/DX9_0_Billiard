@@ -12,7 +12,8 @@ public:
 
 	void tempdraw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld,
 		const D3DXMATRIX& mView,
-		const D3DXVECTOR4& mLightPos);
+		const D3DXVECTOR4& mLightPos,
+		const D3DXVECTOR4& camPos);
 	bool hasIntersected(CSphere& ball) override;
 	void hitBy(CSphere& ball) override;
 

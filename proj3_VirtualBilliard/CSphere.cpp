@@ -50,7 +50,8 @@ bool CSphere::create(IDirect3DDevice9* pDevice, D3DCOLOR color){
 
 void CSphere::tempdraw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld,
 	const D3DXMATRIX& mView,
-	const D3DXVECTOR4& mLightPos){
+	const D3DXVECTOR4& mLightPos,
+	const D3DXVECTOR4& camPos){
 	if (NULL == pDevice)
 		return;
 
@@ -61,7 +62,9 @@ void CSphere::tempdraw(IDirect3DDevice9* pDevice, const D3DXMATRIX& mWorld,
 	m_effect->SetMatrix("gLocalMatrix", &m_mLocal);
 	m_effect->SetMatrix("gWorldMatrix", &mWorld);
 	m_effect->SetMatrix("gViewMatrix", &mView);
-	m_effect->SetVector("gWorldLightPosition", &mLightPos);
+	m_effect->SetVector("gLightColor", &(D3DXVECTOR4(100, 100, 100, 1)));
+	m_effect->SetVector("gWorldLightPosition", &(D3DXVECTOR4(0, 500, 0, 1)));
+	m_effect->SetVector("gWorldCameraPosition", &camPos);
 	m_effect->SetMatrix("gProjectionMatrix", &proj);
 	m_effect->SetTexture("DiffuseMap", m_texture);
 	//m_effect->
