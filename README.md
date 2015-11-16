@@ -1,4 +1,5 @@
 ﻿# 프로젝트 환경 설정 방법
+﻿(Forked repository for testing shaders & porting to DX 11) 
 .( 걍 받고 실행시키면 됩니다. 하단의 환경설정은 bongbong 홈피에서 막 받은 프로젝트 파일 & 라이브러리를 쓸때만 해당)
  
 1. bongbong에서 주는 DX winzip파일 압축을 풀고 Include와 Lib폴더 두개만 프로젝트 폴더에 넣는다.
