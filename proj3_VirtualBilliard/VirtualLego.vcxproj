@@ -149,6 +149,7 @@
     <ClCompile Include="CCue.cpp" />
     <ClCompile Include="CLight.cpp" />
     <ClCompile Include="CObject.cpp" />
+    <ClCompile Include="CPlayer.cpp" />
     <ClCompile Include="CSphere.cpp" />
     <ClCompile Include="CText.cpp" />
     <ClCompile Include="CWall.cpp" />
@@ -158,6 +159,7 @@
   <ItemGroup>
     <ClInclude Include="CCue.h" />
     <ClInclude Include="CLight.h" />
+    <ClInclude Include="CPlayer.h" />
     <ClInclude Include="CRay.h" />
     <ClInclude Include="CSphere.h" />
     <ClInclude Include="CText.h" />
